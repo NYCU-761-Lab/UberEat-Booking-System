@@ -1,0 +1,1 @@
+Auth part restful API document - https://hackmd.io/@yoona/SJWTYTMH9
