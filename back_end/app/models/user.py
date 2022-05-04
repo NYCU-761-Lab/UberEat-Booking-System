@@ -1,16 +1,16 @@
 from app.db import db
-from werkzeug.security import hmac
+from werkzeug.security import check_password_hash
 
 class UserModel(db.Model):
     __tablename__ = 'user'
 
     # now is no limit of length (not sure if is ok for sqlite) <fix>
-    account = db.Column(db.String(), unique = True, nullable = False)
-    password = db.Column(db.String(), nullable = False)
-    username = db.Column(db.String(), nullable = False)
+    account = db.Column(db.String(256), unique = True, nullable = False)
+    password = db.Column(db.String(256), nullable = False)
+    username = db.Column(db.String(256), nullable = False)
     phone_number = db.Column(db.String(10), nullable = False)
-    latitude = db.Column(db.Float(), nullable = False)
-    longitude = db.Column(db.Float(), nullable = False)
+    latitude = db.Column(db.Float(256), nullable = False)
+    longitude = db.Column(db.Float(256), nullable = False)
 
 
     # foreign key part, later, wail until we have other models
@@ -28,9 +28,8 @@ class UserModel(db.Model):
         db.session.commit()
 
     def check_password(self, password):
-        return hmac.compare_digest(self.password, password)
+        return check_password_hash(self.password, password)
 
     @classmethod
     def find_by_account(cls, account):
         return cls.query.filter_by(account=account).first()
-        

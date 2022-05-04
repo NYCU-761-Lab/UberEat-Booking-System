@@ -2,9 +2,9 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api, Resource
 
-# from app.resources.user import Auth, Auth_login
 import config_secret
 
+from app.resources.user import auth_register, auth_login
 
 app = Flask(__name__)
 
@@ -24,8 +24,8 @@ app.config['JWT_SECRET_KEY'] = config_secret.jwt_secret_key
 
 # 4. api & URL
 api = Api(app)
-api.add_resource( Auth,  "/auth/")
-api.add_resource( Auth_login,  "/auth/login")
+api.add_resource( auth_register,  "/auth/register")
+api.add_resource( auth_login,  "/auth/login")
 
 
 if __name__ == '__main__':
