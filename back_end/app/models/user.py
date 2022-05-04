@@ -33,3 +33,4 @@ class UserModel(db.Model):
     @classmethod
     def find_by_account(cls, account):
         return cls.query.filter_by(account=account).first()
+        
