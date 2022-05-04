@@ -2,7 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api, Resource
 
-from app.resources.user import Auth, Auth_login
+# from app.resources.user import Auth, Auth_login
 import config_secret
 
 
