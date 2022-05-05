@@ -1,10 +1,10 @@
 from flask import Flask
 from flask_jwt_extended import JWTManager
-from flask_restful import Api, Resource
+from flask_restful import Api
 
 import config_secret
 
-from app.resources.user import auth_register, auth_login
+from resources.user import auth_register, auth_login
 
 app = Flask(__name__)
 
@@ -14,7 +14,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/yoona//4th_Sem/sql/HW2
 # 2. create table in db
 @app.before_first_request
 def create_tables():
-    from app.db import db   
+    from app.db import db
     db.init_app(app)
     db.create_all()
 

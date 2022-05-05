@@ -1,9 +1,13 @@
-from flask import Resource, reqparse, jsonify
-from app.models.user import UserModel
-from check_function import check_username
+from flask import jsonify
+from flask_restful import Resource, reqparse
+from .check_function import check_username
 from werkzeug.security import generate_password_hash
 from flask_jwt_extended import create_access_token
 import json
+import sys
+sys.path.append('..')
+# from ..models.user import UserMode
+from models.user import UserModel
 
 class auth_register(Resource):
     
