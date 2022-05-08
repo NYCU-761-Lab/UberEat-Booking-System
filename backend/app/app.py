@@ -6,8 +6,12 @@ import config_secret
 
 from resources.user import auth_register, auth_login
 
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+# 0. set app to not be block
+CORS(app)
 
 # 1. connect to db
 # from sqlalchemy import create_engine
