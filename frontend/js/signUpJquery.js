@@ -7,6 +7,7 @@ $(document).ready(function() {
         else {
             $("#passwordText").html("密碼不相符");
             $("#passwordText").css("color", "red");
+            console.log("password wrong"); 
         }
     });
   
@@ -17,7 +18,7 @@ $(document).ready(function() {
         let password = $("#password").val();
         let re_password = $("#re-password").val();
         let latitude = $("#latitude").val();
-        let longitude = $("#longitudee").val();
+        let longitude = $("#longitude").val();
 
         let request_url = "http://127.0.0.1:8080";
         let canSignUp = true;
@@ -30,7 +31,7 @@ $(document).ready(function() {
 
         // 檢查密碼驗證是否相符
         if (password != re_password) {
-            canSignUp = false;    
+            canSignUp = false;   
         }
         
         if (canSignUp) {
@@ -39,12 +40,12 @@ $(document).ready(function() {
                 method: "POST",
                 dataType: "json",
                 data: {
-                    'name': name,
+                    'username': name,
                     'phone_number': phone_number,
                     'account': account,
                     'password': password,
                     'latitude': latitude,
-                    'longtitude': longtitude
+                    'longitude': longitude
                 },
                 success: function(data) {
                     console.log(data);
