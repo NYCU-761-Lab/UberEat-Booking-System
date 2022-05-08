@@ -1,35 +1,41 @@
-from flask import Flask, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_restful import Api, Resource
-from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, get_jwt, set_access_cookies
-from datetime import datetime
-from datetime import timedelta
-from datetime import timezone
+from flask import Flask
+from flask_jwt_extended import JWTManager
+from flask_restful import Api
 
-from app.resources.user import Auth, Auth_login
-import configSecret
+import config_secret
+
+from resources.user import auth_register, auth_login
 
 
 app = Flask(__name__)
 
 # 1. connect to db
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/yoona/Documents/noteweb_backend/database.db'
+# from sqlalchemy import create_engine
+# engine = create_engine('postgresql://scott:tiger@localhost:8080/mydatabase')
+# basedir= os.path.abspath(os.path.dirname(__file__))
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.path.join(basedir,'data.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/yoona/Documents/4th_Sem/sql/HW2/UberEat-Booking-System/backend/database.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# 3. jwt
+jwt = JWTManager(app)
+app.config['JWT_SECRET_KEY'] = config_secret.jwt_secret_key
+
 
 # 2. create table in db
 @app.before_first_request
 def create_tables():
-    from app.db import db   
+    from app.db import db
+    # db.app = app
+    from models.user import UserModel
     db.init_app(app)
     db.create_all()
 
-# 3. jwt
-jwt = JWTManager(app)
-app.config['JWT_SECRET_KEY'] = configSecret.jwt_secret_key
 
 # 4. api & URL
 api = Api(app)
-api.add_resource( Auth,  "/auth/")
-api.add_resource( Auth_login,  "/auth/login")
+api.add_resource( auth_register,  "/auth/register")
+api.add_resource( auth_login,  "/auth/login")
 
 
 if __name__ == '__main__':
