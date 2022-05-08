@@ -79,7 +79,7 @@
 						</div>
 						<div class="form-group">
 							<label for="Account" class="sr-only">Account</label>
-							<input type="text" class="form-control" id="Account" placeholder="Account" autocomplete="off">
+							<input type="text" class="form-control accountText" id="Account" placeholder="Account" autocomplete="off">
 						</div>
 						<div class="form-group">
 							<label for="password" class="sr-only">Password</label>
@@ -87,7 +87,8 @@
 						</div>
 						<div class="form-group">
 							<label for="re-password" class="sr-only">Re-type Password</label>
-							<input type="password" class="form-control" id="re-password" placeholder="Re-type Password" autocomplete="off">
+							<input type="password" class="form-control passwordPlace" id="re-password" placeholder="Re-type Password" autocomplete="off">
+							<p id="passwordText"></p>
 						</div>
 						<div class="form-group">
 							<label for="latitude" class="sr-only">latitude</label>
@@ -102,7 +103,7 @@
 							<p>Already registered? <a href="index.html">Sign In</a></p>
 						</div>
 						<div class="form-group">
-							<input type="submit" value="Sign Up" class="btn btn-primary">
+							<input type="button" value="Sign Up" class="btn btn-primary signUpBtn">
 						</div>
 						
 					</form>
@@ -117,6 +118,8 @@
 	
 	<!-- jQuery -->
 	<script src="js/jquery.min.js"></script>
+	<script src="js/signUpJQuery.js"></script>
+
 	<!-- Bootstrap -->
 	<script src="js/bootstrap.min.js"></script>
 	<!-- Placeholder -->

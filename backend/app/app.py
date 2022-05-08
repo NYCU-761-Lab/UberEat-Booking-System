@@ -6,6 +6,7 @@ import config_secret
 
 from resources.user import auth_register, auth_login
 
+
 app = Flask(__name__)
 
 # 1. connect to db
@@ -19,6 +20,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # 3. jwt
 jwt = JWTManager(app)
 app.config['JWT_SECRET_KEY'] = config_secret.jwt_secret_key
+
 
 # 2. create table in db
 @app.before_first_request
