@@ -4,7 +4,7 @@ from flask_restful import Api
 
 import config_secret
 
-from resources.user import auth_register, auth_login
+from resources.user import auth_register, auth_login, auth_check_account
 
 from flask_cors import CORS
 
@@ -40,7 +40,7 @@ def create_tables():
 api = Api(app)
 api.add_resource( auth_register,  "/auth/register")
 api.add_resource( auth_login,  "/auth/login")
-
+api.add_resource( auth_check_account,  "/auth/check_account")
 
 if __name__ == '__main__':
     app.run( debug = True )
