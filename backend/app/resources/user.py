@@ -64,7 +64,10 @@ class auth_register(Resource):
         password = generate_password_hash(password, method='pbkdf2:sha256') # salt length seems like 16
         user = UserModel(account, password, username, phone_number, latitude, longitude)
         user.save_to_db()
-        return {'message': 'User has been created successfully.'}, 200
+        access_token = create_access_token(identity = account)
+        return {'message': 'User has been created successfully.',
+                'access_token' : access_token
+                }, 200
 
 
 class auth_login(Resource):
