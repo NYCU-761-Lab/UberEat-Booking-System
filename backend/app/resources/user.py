@@ -1,9 +1,10 @@
 from flask import jsonify
 from flask_restful import Resource, reqparse
-from .check_function import check_username
+from .check_function import check_username, is_float
 from werkzeug.security import generate_password_hash
 from flask_jwt_extended import create_access_token
 import json
+import ast
 # from ..models.user import UserMode
 import sys
 sys.path.append('..')
@@ -21,9 +22,11 @@ class auth_register(Resource):
                         help = 'This field cannot be left blank.')
     parser.add_argument('phone_number', type = str, required = True, 
                         help = 'This field cannot be left blank.')
-    parser.add_argument('latitude', type = float, required = True, 
+    # change the feild of latitude & longitude into str in parser 
+    # in order to better handle all the situations
+    parser.add_argument('latitude', type = str, required = True, 
                         help = 'This field cannot be left blank.')
-    parser.add_argument('longitude', type = float, required = True, 
+    parser.add_argument('longitude', type = str, required = True, 
                         help = 'This field cannot be left blank.')
     
     # 2. register function
@@ -53,16 +56,20 @@ class auth_register(Resource):
         elif not phone_number.isdigit() or len(phone_number) != 10:
             return {'message': 'The phone number format is wrong.'}, 400
 
-        elif not (-90 <= latitude and latitude <= 90):
+        elif not is_float( latitude ):
+            return {'message': 'The latitude is not float type.'}, 400
+        elif not (-90 <= ast.literal_eval(latitude) and ast.literal_eval(latitude) <= 90):
             return {'message': 'The latitude value range is wrong.'}, 400
-        
-        elif not (-180 <= longitude and longitude <= 180):
+
+        elif not is_float( longitude ):
+            return {'message': 'The longitude is not float type.'}, 400
+        elif not (-180 <= ast.literal_eval(longitude) and ast.literal_eval(longitude) <= 180):
             return {'message': 'The longitude value range is wrong.'}, 400
         
 
         # 2-3. pass the test and need to save to db
         password = generate_password_hash(password, method='pbkdf2:sha256') # salt length seems like 16
-        user = UserModel(account, password, username, phone_number, latitude, longitude)
+        user = UserModel(account, password, username, phone_number, ast.literal_eval(latitude), ast.literal_eval(longitude))
         user.save_to_db()
         access_token = create_access_token(identity = account)
         return {'message': 'User has been created successfully.',
@@ -96,3 +103,23 @@ class auth_login(Resource):
         # 2-3. pass and handout JWT
         access_token = create_access_token(identity = account)
         return {'access_token' : access_token}, 200
+
+
+class auth_check_account(Resource):
+    # 1. set up the request arguments field
+    parser = reqparse.RequestParser()
+    parser.add_argument('account', type = str, required = True, 
+                        help = 'This field cannot be left blank.')
+    # 2. check account function
+    def post(self):
+        # 2-1. receive the data from the front end
+        data = auth_check_account.parser.parse_args()
+        account     = data['account']
+
+        # 2-2. check account & password
+        if not account.isalnum() or not (0 < len(account) and len(account) <= 256):
+            return {'message': 'The account format is wrong.'}, 400
+        elif UserModel.find_by_account(account):
+            return {'message': 'The account is already being used.'}, 409
+        else:
+            return {'message': 'The account has not been used.'}, 200
