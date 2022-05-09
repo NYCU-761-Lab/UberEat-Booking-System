@@ -117,7 +117,9 @@ class auth_check_account(Resource):
         account     = data['account']
 
         # 2-2. check account & password
-        if not UserModel.find_by_account(account):
-            return {'message': 'The account has not been used.'}, 200
-        else:
+        if not account.isalnum() or not (0 < len(account) and len(account) <= 256):
+            return {'message': 'The account format is wrong.'}, 400
+        elif UserModel.find_by_account(account):
             return {'message': 'The account is already being used.'}, 409
+        else:
+            return {'message': 'The account has not been used.'}, 200

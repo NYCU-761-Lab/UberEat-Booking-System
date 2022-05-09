@@ -19,3 +19,11 @@ def check_username(username):
             return False
 
     return True
+
+
+def is_float(float_str):
+    try:
+        float(float_str)
+        return True
+    except ValueError:
+        return False
