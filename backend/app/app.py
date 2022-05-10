@@ -50,13 +50,8 @@ api = Api(app)
 api.add_resource( auth_register,  "/auth/register")
 api.add_resource( auth_login,  "/auth/login")
 api.add_resource( auth_check_account,  "/auth/check_account")
-<<<<<<< HEAD
 api.add_resource( auth_account_information, "/auth/info")
 api.add_resource( auth_location, "/auth/location")
-=======
-# api.add_resource( try_get_account,  '/auth', endpoint='auth')
-
->>>>>>> e7a67d8 (try get function(comment))
 
 if __name__ == '__main__':
     app.run( debug = True )
