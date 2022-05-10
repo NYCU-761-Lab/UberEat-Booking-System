@@ -2,7 +2,6 @@ from app.db import db
 
 class ShopModel(db.Model):
     __tablename__ = 'shop'
-
     # string limit length: 256
     shop_name = db.Column(db.String(256), unique = True, nullable = False, primary_key = True)
     shop_type = db.Column(db.String(256), nullable = False)
