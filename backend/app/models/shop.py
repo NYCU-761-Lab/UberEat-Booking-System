@@ -2,12 +2,12 @@ from app.db import db
 
 class ShopModel(db.Model):
     __tablename__ = 'shop'
-    
+
     # string limit length: 256
     shop_name = db.Column(db.String(256), unique = True, nullable = False, primary_key = True)
+    shop_type = db.Column(db.String(256), nullable = False)
     latitude = db.Column(db.Float(256), nullable = False)
     longitude = db.Column(db.Float(256), nullable = False)
-    shop_type = db.Column(db.String(256), nullable = False)
 
     # foreign key part, later, wail until we have other models
     # db.ForeignKey('table_name.primary_key'), table_name seems like no need to import
