@@ -15,6 +15,7 @@ class UserModel(db.Model):
 
 
     # foreign key part, later, wail until we have other models
+    db_user_shop = db.relationship("ShopModel", backref="user")
 
     def __init__(self, account, password, username, phone_number, latitude, longitude, role):
         self.account = account
