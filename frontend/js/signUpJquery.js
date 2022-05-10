@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    let canSignUp = true;
+
     $(".passwordPlace").on("input", function() {
         let password = $("#password").val();
         let re_password = $("#re-password").val();
@@ -31,11 +33,44 @@ $(document).ready(function() {
     });
 
     // 檢查 account 是否被使用過
-    $("#accountText").on("input", function() {
+    $(".accountPlace").on("input", function() {
         let request_url = "http://127.0.0.1:8080";
-        let account = $("#accountText").val();
-        // 有長度才會送
+        let account = $(".accountPlace").val();
 
+        if (account != "") {
+            let statusCode = null;
+            let headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+            let body = {
+                'account': account
+            }
+
+            fetch(request_url + "/auth/check_account", {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(body)
+            })
+            .then(function(response) {
+                statusCode = response['status'];
+                return response.json();
+            })
+            .then(function(myJson) {
+                if (statusCode === 200) {
+                    $("#accountText").html("");
+                    canSignUp = true;
+                } else if (statusCode === 400) {
+                    $("#accountText").html("輸入格式錯誤");
+                    $("#accountText").css("color", "red");
+                    canSignUp = false;
+                } else if (statusCode === 409) {
+                    $("#accountText").html("帳號已被使用");
+                    $("#accountText").css("color", "red");
+                    canSignUp = false;
+                }
+            });
+        }
     });
   
     $(".signUpBtn").click(function() {
@@ -48,7 +83,6 @@ $(document).ready(function() {
         let longitude = $("#longitude").val();
 
         let request_url = "http://127.0.0.1:8080";
-        let canSignUp = true;
 
         // 檢查欄位是否空白
         if (name === "" || phone_number === "" || account === "" || password === "" || re_password === "" || latitude === "" || longitude === "") {
@@ -88,6 +122,7 @@ $(document).ready(function() {
             })
             .then(function(myJson) {
                 if (statusCode === 200) {
+                    alert("註冊成功");
                     window.location.replace("index.html");
                 } else if (statusCode === 400) {
                     // 欄位空白的情況已經被確認過，只需要確認格式錯誤
@@ -115,10 +150,7 @@ $(document).ready(function() {
                         $("#longitudeText").css("color", "red");
                     }
                 }
-                // console.log(myJson);  // yoona's message
             });
         }
-
-
     });
 });
