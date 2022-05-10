@@ -124,3 +124,15 @@ class auth_check_account(Resource):
             return {'message': 'The account is already being used.'}, 409
         else:
             return {'message': 'The account has not been used.'}, 200
+
+# class try_get_account(Resource):
+#     parser = reqparse.RequestParser()
+#     parser.add_argument('account', type = str, required = True, 
+#                         help = 'This field cannot be left blank.')
+#     # 2. check account function
+#     def get(self):
+#         # 2-1. receive the data from the front end
+#         data = auth_check_account.parser.parse_args()
+#         account     = data['account']
+
+#         return {'account': account}, 200
