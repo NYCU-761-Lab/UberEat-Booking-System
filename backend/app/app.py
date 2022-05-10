@@ -4,7 +4,7 @@ from flask_restful import Api
 
 import config_secret
 
-from resources.user import auth_register, auth_login, auth_check_account
+from resources.user import auth_register, auth_login, auth_check_account, try_get_account
 
 from flask_cors import CORS
 
@@ -43,6 +43,8 @@ api = Api(app)
 api.add_resource( auth_register,  "/auth/register")
 api.add_resource( auth_login,  "/auth/login")
 api.add_resource( auth_check_account,  "/auth/check_account")
+# api.add_resource( try_get_account,  '/auth', endpoint='auth')
+
 
 if __name__ == '__main__':
     app.run( debug = True )
