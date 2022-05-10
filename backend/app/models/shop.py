@@ -1,4 +1,5 @@
 from app.db import db
+# from user import UserModel
 
 class ShopModel(db.Model):
     __tablename__ = 'shop'
