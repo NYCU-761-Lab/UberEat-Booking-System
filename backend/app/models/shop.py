@@ -12,7 +12,8 @@ class ShopModel(db.Model):
     # foreign key part, later, wail until we have other models
     # db.ForeignKey('table_name.primary_key'), table_name seems like no need to import
     user_account = db.Column(db.String(256), db.ForeignKey('user.account'), unique = True, nullable = False)
-    
+    db_shop_product = db.relationship("ProductModel", backref="shop")
+
     def __init__(self, shop_name, latitude, longitude, shop_type):
         self.shop_name = shop_name
         self.latitude = latitude
