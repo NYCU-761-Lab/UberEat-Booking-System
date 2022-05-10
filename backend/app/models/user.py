@@ -22,7 +22,7 @@ class UserModel(db.Model):
     # we can get the user information by
     # ShopModel.user or ProductModel.user
     db_user_shop = db.relationship("ShopModel", backref="user")
-    db_user_shop = db.relationship("ProductModel", backref="user")
+    db_user_product = db.relationship("ProductModel", backref="user")
 
     def __init__(self, account, password, username, phone_number, latitude, longitude, role):
         self.account = account

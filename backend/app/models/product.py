@@ -15,6 +15,7 @@ class ProductModel(db.Model):
     # foreign key part, later, wail until we have other models
     # db.ForeignKey('table_name.primary_key')
     user_account = db.Column(db.String(256), db.ForeignKey('user.account'), unique = True, nullable = False)
+    shop_name = db.Column(db.String(256), db.ForeignKey('shop.shop_name'), unique = True, nullable = False)
     
     def __init__(self, product_id, product_name, picture, price, quantity):
         self.product_id = product_id
