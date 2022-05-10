@@ -39,6 +39,7 @@ class auth_register(Resource):
         phone_number    = data['phone_number']
         latitude    = data['latitude']
         longitude   = data['longitude']
+        role        = 'user'
 
         # 2-2. format & unique filter
         # check format first, than check unique
@@ -69,7 +70,7 @@ class auth_register(Resource):
 
         # 2-3. pass the test and need to save to db
         password = generate_password_hash(password, method='pbkdf2:sha256') # salt length seems like 16
-        user = UserModel(account, password, username, phone_number, ast.literal_eval(latitude), ast.literal_eval(longitude))
+        user = UserModel(account, password, username, phone_number, ast.literal_eval(latitude), ast.literal_eval(longitude), role)
         user.save_to_db()
         access_token = create_access_token(identity = account)
         return {'message': 'User has been created successfully.',
