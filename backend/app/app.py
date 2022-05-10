@@ -19,6 +19,8 @@ CORS(app)
 # basedir= os.path.abspath(os.path.dirname(__file__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.path.join(basedir,'data.sqlite')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/yoona/Documents/4th_Sem/sql/HW2/UberEat-Booking-System/backend/database.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/angelahsi/desktop/UberEat-Booking-System/backend/database.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # 3. jwt
