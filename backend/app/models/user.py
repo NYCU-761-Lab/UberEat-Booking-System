@@ -1,6 +1,9 @@
 from app.db import db
 from werkzeug.security import check_password_hash
 
+ # need to find from the root app, or will have circular import
+from app.models.shop import ShopModel
+
 class UserModel(db.Model):
     __tablename__ = 'user'
 
