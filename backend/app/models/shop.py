@@ -1,4 +1,5 @@
 from app.db import db
+# from user import UserModel
 
 class ShopModel(db.Model):
     __tablename__ = 'shop'
@@ -10,7 +11,10 @@ class ShopModel(db.Model):
     shop_type = db.Column(db.String(256), nullable = False)
 
     # foreign key part, later, wail until we have other models
-
+    # db.ForeignKey('table_name.primary_key')
+    user_account = db.Column(db.String(256), db.ForeignKey('user.account'), unique = True, nullable = False)
+    
+    
     def __init__(self, shop_name, latitude, longitude, shop_type):
         self.shop_name = shop_name
         self.latitude = latitude
