@@ -10,7 +10,7 @@ class ProductModel(db.Model):
     product_name = db.Column(db.String(256), nullable = False)
     picture = db.Column(db.String(256), nullable = False)
     price = db.Column(db.Float(256), nullable = False)
-    quantity = db.Column(db.Integer(256), nullable = False)  # need to be int
+    quantity = db.Column(db.Integer(), nullable = False)  # need to be int
     
     # foreign key part, later, wail until we have other models
     # db.ForeignKey('table_name.primary_key')

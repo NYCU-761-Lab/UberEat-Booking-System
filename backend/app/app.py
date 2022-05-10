@@ -4,7 +4,7 @@ from flask_restful import Api
 
 import config_secret
 
-from resources.user import auth_register, auth_login, auth_check_account, try_get_account
+from resources.user import auth_register, auth_login, auth_check_account
 
 from flask_cors import CORS
 
@@ -34,6 +34,8 @@ def create_tables():
     from app.db import db
     # db.app = app
     from models.user import UserModel
+    from models.shop import ShopModel
+    from models.product import ProductModel
     db.init_app(app)
     db.create_all()
 
