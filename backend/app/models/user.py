@@ -46,8 +46,7 @@ class UserModel(db.Model):
     
     @classmethod
     def edit_location(cls, account, latitude, longitude):
-        query = cls.query.filter_by(account=acm
-        rcount).first()
+        query = cls.query.filter_by(account=account).first()
         query.latitude = latitude
         query.longitude = longitude
         db.session.commit()
