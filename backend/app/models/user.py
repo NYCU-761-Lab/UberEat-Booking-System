@@ -21,8 +21,8 @@ class UserModel(db.Model):
     # foreign key part, later, wail until we have other models
     # we can get the user information by
     # ShopModel.user or ProductModel.user
-    # db_user_shop = db.relationship("ShopModel", backref="user")
-    # db_user_product = db.relationship("ProductModel", backref="user")
+    db_user_shop = db.relationship("ShopModel", backref="user")
+    db_user_product = db.relationship("ProductModel", backref="user")
 
     def __init__(self, account, password, username, phone_number, latitude, longitude, role):
         self.account = account

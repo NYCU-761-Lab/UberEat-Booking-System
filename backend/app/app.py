@@ -4,7 +4,14 @@ from flask_restful import Api
 from flask_cors import CORS
 
 import config_secret
+<<<<<<< HEAD
 from resources.user import auth_register, auth_login, auth_check_account, auth_account_information, auth_location
+=======
+
+from resources.user import auth_register, auth_login, auth_check_account
+
+from flask_cors import CORS
+>>>>>>> cd5b9dc (recover comment)
 
 app = Flask(__name__)
 
