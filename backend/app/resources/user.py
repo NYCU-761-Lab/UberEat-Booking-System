@@ -2,7 +2,7 @@ from flask import jsonify
 from flask_restful import Resource, reqparse
 from .check_function import check_username, is_float
 from werkzeug.security import generate_password_hash
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import json
 import ast
 # from ..models.user import UserMode
@@ -125,14 +125,13 @@ class auth_check_account(Resource):
         else:
             return {'message': 'The account has not been used.'}, 200
 
-# class try_get_account(Resource):
-#     parser = reqparse.RequestParser()
-#     parser.add_argument('account', type = str, required = True, 
-#                         help = 'This field cannot be left blank.')
-#     # 2. check account function
-#     def get(self):
-#         # 2-1. receive the data from the front end
-#         data = auth_check_account.parser.parse_args()
-#         account     = data['account']
 
-#         return {'account': account}, 200
+@jwt_required
+class try_get_account(Resource):
+
+    # 2. check account function
+    def get(self):
+        # 2-1. receive the data from the front end
+        identity = get_jwt_identity()
+        return {'identity': identity}, 200
+
