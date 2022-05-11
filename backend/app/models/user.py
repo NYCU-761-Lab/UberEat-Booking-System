@@ -1,9 +1,9 @@
 from app.db import db
 from werkzeug.security import check_password_hash
 
- # need to find from the root app, or will have circular import
-from app.models.shop import ShopModel
-from app.models.product import ProductModel
+# need to find from the root app, or will have circular import
+# from app.models.shop import ShopModel
+# from app.models.product import ProductModel
 
 class UserModel(db.Model):
     __tablename__ = 'user'
@@ -21,8 +21,8 @@ class UserModel(db.Model):
     # foreign key part, later, wail until we have other models
     # we can get the user information by
     # ShopModel.user or ProductModel.user
-    db_user_shop = db.relationship("ShopModel", backref="user")
-    db_user_product = db.relationship("ProductModel", backref="user")
+    # db_user_shop = db.relationship("ShopModel", backref="user")
+    # db_user_product = db.relationship("ProductModel", backref="user")
 
     def __init__(self, account, password, username, phone_number, latitude, longitude, role):
         self.account = account

@@ -39,10 +39,12 @@ def create_tables():
     from app.db import db
     # db.app = app
     from models.user import UserModel
-    from models.shop import ShopModel
-    from models.product import ProductModel
+    # from models.shop import ShopModel
+    # from models.product import ProductModel
     db.init_app(app)
     db.create_all()
+    # migrate = Migrate(app, db)
+    print("hi")
 
 
 # 4. api & URL
