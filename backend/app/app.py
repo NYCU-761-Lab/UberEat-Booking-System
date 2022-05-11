@@ -43,8 +43,9 @@ def create_tables():
     # from models.product import ProductModel
     db.init_app(app)
     db.create_all()
+
+    """Future need to add migrate to migrate new and old db"""
     # migrate = Migrate(app, db)
-    print("hi")
 
 
 # 4. api & URL
