@@ -50,3 +50,9 @@ class UserModel(db.Model):
         query.latitude = latitude
         query.longitude = longitude
         db.session.commit()
+
+    @classmethod
+    def edit_role(cls, account):
+        query = cls.query.filter_by(account=account).first()
+        query.role = 'manager'
+        db.session.commit()

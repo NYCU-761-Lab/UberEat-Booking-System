@@ -10,14 +10,15 @@ class ShopModel(db.Model):
 
     # foreign key part, later, wail until we have other models
     # db.ForeignKey('table_name.primary_key'), table_name seems like no need to import
-    user_account = db.Column(db.String(256), db.ForeignKey('user.account'), unique = True, nullable = False)
+    owner = db.Column(db.String(256), db.ForeignKey('user.account'), unique = True, nullable = False)
     db_shop_product = db.relationship("ProductModel", backref="shop")
 
-    def __init__(self, shop_name, latitude, longitude, shop_type):
+    def __init__(self, shop_name, latitude, longitude, shop_type, owner):
         self.shop_name = shop_name
         self.latitude = latitude
         self.longitude = longitude
         self.shop_type = shop_type
+        self.owner = owner
 
     def save_to_db(self):
         db.session.add(self)
@@ -26,3 +27,7 @@ class ShopModel(db.Model):
     @classmethod
     def find_by_shop_name(cls, shop_name):
         return cls.query.filter_by(shop_name=shop_name).first()
+
+    @classmethod
+    def find_shop_by_owner(cls, owner):
+        return cls.query.filter_by(owner=owner).first()

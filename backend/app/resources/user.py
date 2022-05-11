@@ -4,7 +4,8 @@ from .check_function import check_username, is_float
 from werkzeug.security import generate_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import ast
-# from ..models.user import UserMode
+
+# from ..models.user import UserModel
 import sys
 sys.path.append('..')
 from models.user import UserModel

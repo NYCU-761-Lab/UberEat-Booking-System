@@ -4,14 +4,8 @@ from flask_restful import Api
 from flask_cors import CORS
 
 import config_secret
-<<<<<<< HEAD
 from resources.user import auth_register, auth_login, auth_check_account, auth_account_information, auth_location
-=======
-
-from resources.user import auth_register, auth_login, auth_check_account
-
-from flask_cors import CORS
->>>>>>> cd5b9dc (recover comment)
+from resources.shop import shop_register
 
 app = Flask(__name__)
 
@@ -19,8 +13,8 @@ app = Flask(__name__)
 CORS(app)
 
 # 1. connect to db
+# for future engine
 # from sqlalchemy import create_engine
-
 # engine = create_engine('postgresql://scott:tiger@localhost:8080/mydatabase')
 # basedir= os.path.abspath(os.path.dirname(__file__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.path.join(basedir,'data.sqlite')
@@ -46,8 +40,8 @@ def create_tables():
     from app.db import db
     # db.app = app
     from models.user import UserModel
-    # from models.shop import ShopModel
-    # from models.product import ProductModel
+    from models.shop import ShopModel
+    from models.product import ProductModel
     db.init_app(app)
     db.create_all()
 
@@ -57,11 +51,16 @@ def create_tables():
 
 # 4. api & URL
 api = Api(app)
+
+# user api
 api.add_resource( auth_register,  "/auth/register")
 api.add_resource( auth_login,  "/auth/login")
 api.add_resource( auth_check_account,  "/auth/check_account")
 api.add_resource( auth_account_information, "/auth/info")
 api.add_resource( auth_location, "/auth/location")
+
+# shop api
+api.add_resource( shop_register, "/shop/register")
 
 if __name__ == '__main__':
     app.run( debug = True )
