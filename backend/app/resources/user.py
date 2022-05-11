@@ -3,6 +3,7 @@ from flask_restful import Resource, reqparse
 from .check_function import check_username, is_float
 from werkzeug.security import generate_password_hash
 from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required, get_jwt_identity
 import json
 import ast
 # from ..models.user import UserMode
@@ -124,3 +125,60 @@ class auth_check_account(Resource):
             return {'message': 'The account is already being used.'}, 409
         else:
             return {'message': 'The account has not been used.'}, 200
+
+
+class auth_account_information(Resource):
+    @jwt_required(optional = True)
+    def post(self):
+        identity = get_jwt_identity()
+        account_information = UserModel.find_by_account(identity)
+
+        username = account_information.username
+        phone_number = account_information.phone_number
+        latitude = account_information.latitude
+        longitude = account_information.longitude
+        role = account_information.role
+        
+        return {'account': identity,
+                'username': username, 
+                'phone_number': phone_number, 
+                'latitude': latitude, 
+                'longitude': longitude, 
+                'role': role}, 200
+
+
+class auth_location(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('latitude', type = str, required = True, 
+                        help = 'This field cannot be left blank.')
+    parser.add_argument('longitude', type = str, required = True, 
+                        help = 'This field cannot be left blank.')
+
+    @jwt_required(optional = True)
+    def put(self):
+        # check account
+        identity = get_jwt_identity()
+        user = UserModel.query.filter_by(account = identity).one_or_none()
+        if not user:
+            return {'message': 'No this account.'}, 401
+        
+        # check value
+        data = auth_location.parser.parse_args()
+        latitude    = data['latitude']
+        longitude   = data['longitude']
+
+        if not is_float( latitude ):
+            return {'message': 'The latitude is not float type.'}, 400
+        elif not (-90 <= ast.literal_eval(latitude) and ast.literal_eval(latitude) <= 90):
+            return {'message': 'The latitude value range is wrong.'}, 400
+
+        elif not is_float( longitude ):
+            return {'message': 'The longitude is not float type.'}, 400
+        elif not (-180 <= ast.literal_eval(longitude) and ast.literal_eval(longitude) <= 180):
+            return {'message': 'The longitude value range is wrong.'}, 400
+
+        # edit db
+        latitude = ast.literal_eval(latitude)
+        longitude = ast.literal_eval(longitude)
+        UserModel.edit_location(identity, latitude, longitude)
+        return {'message': 'The locaton has been edited successfully.'}, 200
