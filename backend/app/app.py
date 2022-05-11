@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 
 import config_secret
 
-from resources.user import auth_register, auth_login, auth_check_account
+from resources.user import auth_register, auth_login, auth_check_account, try_get_account, try_put_info
 
 from flask_cors import CORS
 
@@ -19,7 +19,7 @@ CORS(app)
 # engine = create_engine('postgresql://scott:tiger@localhost:8080/mydatabase')
 # basedir= os.path.abspath(os.path.dirname(__file__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.path.join(basedir,'data.sqlite')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/yoona/Documents/4th_Sem/sql/HW2/UberEat-Booking-System/backend/database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/database.db'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/angelahsi/desktop/UberEat-Booking-System/backend/database.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -39,8 +39,9 @@ def create_tables():
     # from models.product import ProductModel
     db.init_app(app)
     db.create_all()
+
+    """Future need to add migrate to migrate new and old db"""
     # migrate = Migrate(app, db)
-    print("hi")
 
 
 # 4. api & URL

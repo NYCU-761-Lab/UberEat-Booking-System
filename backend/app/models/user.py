@@ -43,3 +43,10 @@ class UserModel(db.Model):
     @classmethod
     def find_by_account(cls, account):
         return cls.query.filter_by(account=account).first()
+
+    # @classmethod
+    # def edit_location(cls, account, latitude, longitude):
+    #     query = cls.query.filter_by(account=account).first()
+    #     query.latitude = latitude
+    #     query.longitude = longitude
+    #     db.session.commit()
