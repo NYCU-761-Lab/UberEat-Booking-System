@@ -2,9 +2,7 @@ from flask import jsonify
 from flask_restful import Resource, reqparse
 from .check_function import check_username, is_float
 from werkzeug.security import generate_password_hash
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import jwt_required, get_jwt_identity
-import json
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import ast
 # from ..models.user import UserMode
 import sys
