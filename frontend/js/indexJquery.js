@@ -28,7 +28,12 @@ $(document).ready(function() {
                 return response.json();
             })
             .then(function(myJson) {
-                if(statusCode === 200) window.location.replace("nav.html");
+                if(statusCode === 200) {
+                    const accessToken = myJson['access_token'];
+                    localStorage.setItem("tokenStorage", accessToken);
+                    localStorage.setItem("accountStorage", account);
+                    window.location.replace("nav.html");
+                }
                 else alert("登入失敗");
             })
         }
