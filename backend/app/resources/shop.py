@@ -1,11 +1,15 @@
 from flask import jsonify
 from flask_restful import Resource, reqparse
+<<<<<<< HEAD
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.user import UserModel
 from models.shop import ShopModel
 from .check_function import check_username, is_float
 import ast
 
+=======
+import json
+>>>>>>> cd5b9dcb2a9d5dd226bcce33b5eb4a9308789af7
 
 ##### register ########################################################################
 
