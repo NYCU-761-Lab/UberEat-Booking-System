@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 import config_secret
 from resources.user import auth_register, auth_login, auth_check_account, auth_account_information, auth_location
-from resources.shop import shop_register, shop_name_filter, shop_distance_filter
+from resources.shop import shop_register, shop_name_filter, shop_distance_filter, shop_type_filter, get_shop_type, get_shop_distance, get_shop_latitude, get_shop_longitude, get_shop_name_of_user
 
 app = Flask(__name__)
 
@@ -63,6 +63,13 @@ api.add_resource( auth_location, "/auth/edit_location") # original: /auth/locati
 api.add_resource( shop_register, "/shop/register")
 api.add_resource( shop_name_filter, "/shop/name_filter")
 api.add_resource( shop_distance_filter, "/shop/distance_filter")
+api.add_resource( shop_type_filter, "/shop/type_filter")
+
+api.add_resource( get_shop_type, "/shop/get_shop_type")
+api.add_resource( get_shop_distance, "/shop/get_shop_distance")
+api.add_resource( get_shop_latitude, "/shop/get_shop_latitude")
+api.add_resource( get_shop_longitude, "/shop/get_shop_longitude")
+api.add_resource( get_shop_name_of_user, "/shop/get_shop_name_of_user")
 
 
 

@@ -1,9 +1,8 @@
-from flask import jsonify
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.user import UserModel
 from models.shop import ShopModel
-from .check_function import check_username, is_float
+from .check_function import is_float
 import ast
 from haversine import haversine, Unit
 
@@ -50,7 +49,6 @@ class shop_register(Resource):
             unique:
                 1. ckeck 是否被註冊過(shop_name only need to check this, no limit for the format)
         """
-        
         if ShopModel.find_shop_by_owner(user_account):
             return {'message': 'The user has already registered a shop'}, 409
         elif ShopModel.find_by_shop_name(shop_name):
@@ -81,14 +79,11 @@ class shop_register(Resource):
 
 class shop_name_filter(Resource):
     
-    # 1. set up the request arguments field
     parser = reqparse.RequestParser()
     parser.add_argument('ask_shop_name', type = str, required = True, 
                         help = 'This field cannot be left blank.')
 
-    # 2. filter function
     def post(self):
-        # 2-1. receive the data from the front end
         data = shop_name_filter.parser.parse_args()
         ask_shop_name     = data['ask_shop_name']
 
@@ -100,18 +95,18 @@ class shop_name_filter(Resource):
 
 class shop_distance_filter(Resource):
     
-    # 1. set up the request arguments field
     parser = reqparse.RequestParser()
     # need user_account to count for the relative distance
     parser.add_argument('req_distance', type = str, required = True, 
                         help = 'This field cannot be left blank.')
 
-    # 2. filter function
     @jwt_required(optional = True)
     def post(self):
         # 2-1. get the user's latitude and longitude
         user_account = get_jwt_identity()
         now_user = UserModel.query.filter_by(account=user_account).first()
+        if not now_user:
+            return {'message': 'No this user account.'}, 401
         now_place = (now_user.latitude, now_user.longitude)
 
         data = shop_distance_filter.parser.parse_args()
@@ -137,18 +132,17 @@ class shop_distance_filter(Resource):
 
 class shop_type_filter(Resource):
     
-    # 1. set up the request arguments field
     parser = reqparse.RequestParser()
     parser.add_argument('req_type', type = str, required = True, 
                         help = 'This field cannot be left blank.')
 
-    # 2. filter function
-    def get(self):
-        # 2-1. receive the data from the front end
+    def post(self):
+        # 2-2. get the all the store name that req_type match
         data = shop_type_filter.parser.parse_args()
         req_type     = data['req_type']
-
-        # 2-2. get the all the store name in the req_distance range
+        valid_shops = ShopModel.query.filter(ShopModel.shop_type.ilike(f'%{req_type}%')).all()  # query will return a list of tuple
+        valid_shops_name = [valid_shops_entity.shop_name for valid_shops_entity in valid_shops]
+        return { 'valid_shops_name': valid_shops_name }, 200
 
 
 ##### get shop info ########################################################################
@@ -160,69 +154,99 @@ class shop_type_filter(Resource):
 
 class get_shop_type(Resource):
     
-    # 1. set up the request arguments field
     parser = reqparse.RequestParser()
     parser.add_argument('shop_name', type = str, required = True, 
                         help = 'This field cannot be left blank.')
 
-    # 2. get info function
-    def get(self):
-        # 2-1. receive the data from the front end
+    def post(self):
+        # 2-1. check if the shop exist
         data = get_shop_type.parser.parse_args()
         shop_name     = data['shop_name']
+        query = ShopModel.query.filter_by(shop_name = shop_name).first()  # shop_name is unique
+        if not query:
+            return {'message': 'No this shop.'}, 401
 
         # 2-2. return the shop_type of the shop_name
+        return { 'shop_type of the shop_name': query.shop_type }, 200
 
 
 
 class get_shop_distance(Resource):
     
-    # 1. set up the request arguments field
     parser = reqparse.RequestParser()
-    parser.add_argument('user_account', type = str, required = True, 
-                        help = 'This field cannot be left blank.')
     parser.add_argument('shop_name', type = str, required = True, 
                         help = 'This field cannot be left blank.')
 
-    # 2. get info function
-    def get(self):
-        # 2-1. receive the data from the front end
-        data = get_shop_distance.parser.parse_args()
-        user_account     = data['user_account']
-        shop_name     = data['shop_name']
+    @jwt_required(optional = True)
+    def post(self):
+        # 2-1. check if the user exist
+        user_account = get_jwt_identity()
+        now_user = UserModel.query.filter_by(account=user_account).first()
+        if not now_user:
+            return {'message': 'No this user account.'}, 401
 
-        # 2-2. use the shop_name and user_account to get the distance between them
+        # 2-2. check if the shop exist
+        data = get_shop_distance.parser.parse_args()
+        shop_name     = data['shop_name']
+        shop = ShopModel.query.filter_by(shop_name = shop_name).first()
+        if not shop:
+            return {'message': 'No this shop.'}, 401
+
+        # 2-3. use the shop_name and user_account to get the distance between them
+        dist = haversine((now_user.latitude, now_user.longitude), (shop.latitude, shop.longitude), unit=Unit.KILOMETERS)
+        return { 'Distance to the shop (km)': dist }, 200
 
 
 
 class get_shop_latitude(Resource):
-    
-    # 1. set up the request arguments field
+
     parser = reqparse.RequestParser()
     parser.add_argument('shop_name', type = str, required = True, 
                         help = 'This field cannot be left blank.')
 
-    # 2. get info function
-    def get(self):
-        # 2-1. receive the data from the front end
+    def post(self):
         data = get_shop_latitude.parser.parse_args()
         shop_name     = data['shop_name']
+        query = ShopModel.query.filter_by(shop_name = shop_name).first()  # shop_name is unique
+        # 2-1. check if the shop exist
+        if not query:
+            return {'message': 'No this shop.'}, 401
 
-        # 2-2. use the shop_name to get it's info
+        # 2-2. return the latitude of the shop_name
+        return { 'latitude of the shop_name': query.latitude }, 200
 
 
 
 class get_shop_longitude(Resource):
     
-    # 1. set up the request arguments field
     parser = reqparse.RequestParser()
     parser.add_argument('shop_name', type = str, required = True, 
                         help = 'This field cannot be left blank.')
 
-    # 2. get info function
-    def get(self):
-        # 2-1. receive the data from the front end
+    def post(self):
         data = get_shop_longitude.parser.parse_args()
         shop_name     = data['shop_name']
+        query = ShopModel.query.filter_by(shop_name = shop_name).first()  # shop_name is unique
+        # 2-1. check if the shop exist
+        if not query:
+            return {'message': 'No this shop.'}, 401
 
-        # 2-2. use the shop_name to get it's info
+        # 2-2. return the longitude of the shop_name
+        return { 'longitude of the shop_name': query.longitude }, 200
+
+
+class get_shop_name_of_user(Resource):
+
+    @jwt_required(optional = True)
+    def post(self):
+        user_account = get_jwt_identity()
+        now_user = UserModel.query.filter_by(account=user_account).first()
+        if not now_user:
+            return {'message': 'No this user account.'}, 401
+
+        shop = ShopModel.query.filter_by(owner=user_account).first()
+        if not shop:
+            return {'message': 'This user does not own a shop.'}, 401
+
+        # 2-2. get the all the store name in the req_distance range
+        return { 'shop_name of the user': shop.shop_name }, 200
