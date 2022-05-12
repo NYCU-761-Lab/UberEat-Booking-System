@@ -91,7 +91,7 @@ class shop_name_filter(Resource):
         # 2-2. check if "ask_shop_name" is in db
         valid_shops = ShopModel.query.filter(ShopModel.shop_name.ilike(f'%{ask_shop_name}%')).all()  # query will return a list of tuple
         valid_shops_name = [valid_shops_entity.shop_name for valid_shops_entity in valid_shops]
-        return { 'valid_shops_name': valid_shops_name }, 200
+        return {'valid_shops_name': valid_shops_name }, 200
         
 
 # 3. 過濾店距離
@@ -115,7 +115,7 @@ class shop_distance_filter(Resource):
         req_distance     = data['req_distance']
 
         if req_distance != 'near' and (req_distance != 'moderate' and req_distance != 'far'):
-            return { 'message': 'Invalid required distance.' }, 400
+            return {'message': 'Invalid required distance.' }, 400
 
         # 2-2. get the all the store name in the req_distance range
         valid_shops_name = []
@@ -129,7 +129,7 @@ class shop_distance_filter(Resource):
             elif req_distance == 'far' and (5 < dist):  # far
                 valid_shops_name.append(shop.shop_name)
 
-        return { 'valid_shops_name': valid_shops_name }, 200
+        return {'valid_shops_name': valid_shops_name }, 200
         
 # 4. 過濾店類別
 class shop_type_filter(Resource):
@@ -144,7 +144,7 @@ class shop_type_filter(Resource):
         req_type     = data['req_type']
         valid_shops = ShopModel.query.filter(ShopModel.shop_type.ilike(f'%{req_type}%')).all()  # query will return a list of tuple
         valid_shops_name = [valid_shops_entity.shop_name for valid_shops_entity in valid_shops]
-        return { 'valid_shops_name': valid_shops_name }, 200
+        return {'valid_shops_name': valid_shops_name }, 200
 
 
 ##### get shop info ########################################################################
@@ -170,7 +170,7 @@ class get_shop_type(Resource):
             return {'message': 'No this shop.'}, 401
 
         # 2-2. return the shop_type of the shop_name
-        return { 'shop_type of the shop_name': query.shop_type }, 200
+        return {'shop_type of the shop_name': query.shop_type }, 200
 
 
 # 6. 顯示店距離
@@ -197,7 +197,7 @@ class get_shop_distance(Resource):
 
         # 2-3. use the shop_name and user_account to get the distance between them
         dist = haversine((now_user.latitude, now_user.longitude), (shop.latitude, shop.longitude), unit=Unit.KILOMETERS)
-        return { 'Distance to the shop (km)': dist }, 200
+        return {'Distance to the shop (km)': dist }, 200
 
 
 # 7. 顯示店經度
@@ -216,7 +216,7 @@ class get_shop_latitude(Resource):
             return {'message': 'No this shop.'}, 401
 
         # 2-2. return the latitude of the shop_name
-        return { 'latitude of the shop_name': query.latitude }, 200
+        return {'latitude of the shop_name': query.latitude }, 200
 
 
 # 8. 顯示店緯度
@@ -235,7 +235,7 @@ class get_shop_longitude(Resource):
             return {'message': 'No this shop.'}, 401
 
         # 2-2. return the longitude of the shop_name
-        return { 'longitude of the shop_name': query.longitude }, 200
+        return {'longitude of the shop_name': query.longitude }, 200
 
 
 # 9. 查詢店名
@@ -253,4 +253,4 @@ class get_shop_name_of_user(Resource):
             return {'message': 'This user does not own a shop.'}, 401
 
         # 2-2. get the all the store name in the req_distance range
-        return { 'shop_name of the user': shop.shop_name }, 200
+        return {'shop_name of the user': shop.shop_name }, 200
