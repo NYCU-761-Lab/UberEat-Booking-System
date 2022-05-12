@@ -6,7 +6,7 @@ $(document).ready(function() {
        
        // checking
        if (account === "" || password === "") {
-           alert("登入失敗");
+           alert("The field cannot be left blank.");
        } else {
             let statusCode = null;
             let headers = {
@@ -34,7 +34,7 @@ $(document).ready(function() {
                     localStorage.setItem("accountStorage", account);
                     window.location.replace("nav.html");
                 }
-                else alert("登入失敗");
+                else alert(myJson['message']);
             })
         }
     });

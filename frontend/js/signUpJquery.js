@@ -7,7 +7,7 @@ $(document).ready(function() {
 
         if (password === re_password) $("#repasswordText").html("");
         else {
-            $("#repasswordText").html("密碼不相符");
+            $("#repasswordText").html("Password is incorrect.");
             $("#repasswordText").css("color", "red");
         }
     });
@@ -61,11 +61,11 @@ $(document).ready(function() {
                     $("#accountText").html("");
                     canSignUp = true;
                 } else if (statusCode === 400) {
-                    $("#accountText").html("輸入格式錯誤");
+                    $("#accountText").html(myJson['message']);
                     $("#accountText").css("color", "red");
                     canSignUp = false;
                 } else if (statusCode === 409) {
-                    $("#accountText").html("帳號已被使用");
+                    $("#accountText").html(myJson['message']);
                     $("#accountText").css("color", "red");
                     canSignUp = false;
                 }
@@ -86,7 +86,7 @@ $(document).ready(function() {
 
         // 檢查欄位是否空白
         if (name === "" || phone_number === "" || account === "" || password === "" || re_password === "" || latitude === "" || longitude === "") {
-            alert("註冊失敗：欄位不能空白");
+            alert("The fields cannot be blank.");
             canSignUp = false;
         }
 
@@ -122,7 +122,7 @@ $(document).ready(function() {
             })
             .then(function(myJson) {
                 if (statusCode === 200) {
-                    alert("註冊成功");
+                    alert("Sign up successfully.");
                     window.location.replace("index.html");
                 } else if (statusCode === 400) {
                     // 欄位空白的情況已經被確認過，只需要確認格式錯誤
@@ -131,22 +131,22 @@ $(document).ready(function() {
                     
                     // 顯示錯誤提示
                     if (errorType === 'username') {
-                        $("#nameText").html("輸入格式錯誤");
+                        $("#nameText").html(myJson['message']);
                         $("#nameText").css("color", "red");
                     } else if (errorType === 'phone') {
-                        $("#phonenumberText").html("輸入格式錯誤");
+                        $("#phonenumberText").html(myJson['message']);
                         $("#phonenumberText").css("color", "red");
                     } else if (errorType === 'account') {
-                        $("#accountText").html("輸入格式錯誤");
+                        $("#accountText").html(myJson['message']);
                         $("#accountText").css("color", "red");
                     } else if (errorType === 'password') {
-                        $("#passwordText").html("輸入格式錯誤");
+                        $("#passwordText").html(myJson['message']);
                         $("#passwordText").css("color", "red");
                     } else if (errorType === 'latitude') {
-                        $("#latitudeText").html("輸入格式錯誤");
+                        $("#latitudeText").html(myJson['message']);
                         $("#latitudeText").css("color", "red");
                     } else if (errorType === 'longitude') {
-                        $("#longitudeText").html("輸入格式錯誤");
+                        $("#longitudeText").html(myJson['message']);
                         $("#longitudeText").css("color", "red");
                     }
                 }

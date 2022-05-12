@@ -9,7 +9,7 @@ $(document).ready(function() {
         "Accept": "application/json",
         "Authorization": "Bearer " + accessToken
     }
-    fetch(request_url + "/auth", {
+    fetch(request_url + "/auth/info", {
         method: 'POST',
         headers: headers,
     })
@@ -33,12 +33,8 @@ $(document).ready(function() {
         let new_longitude = $("#editLongitude").val();
 
         // check whether the new value is valid
-        if (!(-90 <= new_latitude && new_latitude <= 90)) {
-            alert("輸入數值有誤，修改失敗");
-        } else if (!(-180 <= new_longitude && new_longitude <= 180)) {
-            alert("輸入數值有誤，修改失敗");
-        } else if (new_latitude === "" || new_longitude === "") {
-            alert("欄位空白，修改失敗");
+        if (new_latitude === "" || new_longitude === "") {
+            alert("The fields cannot be left blank.");
         } else {
             // edit database
             let statusCode = null;
@@ -65,10 +61,9 @@ $(document).ready(function() {
                 if (statusCode === 200) {
                     $("#accountLatitude").html(new_latitude);
                     $("#accountLongitude").html(new_longitude);
-                } else if (statusCode === 401) {
-                    alert("無法修改此帳戶，修改失敗");
-                } else if (statusCode === 400) {
-                    alert("輸入數值有誤，修改失敗");
+                    alert(myJson['message']);
+                } else {
+                    alert(myJson['message']);
                 }
             });
         }
