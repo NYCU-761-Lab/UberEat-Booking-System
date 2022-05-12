@@ -11,17 +11,19 @@ class UserModel(db.Model):
     phone_number = db.Column(db.String(10), nullable = False)
     latitude = db.Column(db.Float(256), nullable = False)
     longitude = db.Column(db.Float(256), nullable = False)
+    role = db.Column(db.String(10), nullable = False)
 
 
     # foreign key part, later, wail until we have other models
 
-    def __init__(self, account, password, username, phone_number, latitude, longitude):
+    def __init__(self, account, password, username, phone_number, latitude, longitude, role):
         self.account = account
         self.password = password
         self.username = username
         self.phone_number = phone_number
         self.latitude = latitude
         self.longitude = longitude
+        self.role = role
 
     def save_to_db(self):
         db.session.add(self)
@@ -33,3 +35,10 @@ class UserModel(db.Model):
     @classmethod
     def find_by_account(cls, account):
         return cls.query.filter_by(account=account).first()
+    
+    @classmethod
+    def edit_location(cls, account, latitude, longitude):
+        query = cls.query.filter_by(account=account).first()
+        query.latitude = latitude
+        query.longitude = longitude
+        db.session.commit()
