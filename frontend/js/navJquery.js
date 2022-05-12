@@ -3,6 +3,14 @@ $(document).ready(function() {
     const account = localStorage.getItem("accountStorage");
     let request_url = "http://127.0.0.1:8080";
 
+    // log out
+    $(".logOutBtn").click(function() {
+        window.location.replace("index.html");
+        localStorage.removeItem("tokenStorage");
+        localStorage.removeItem("accountStorage");
+    });
+
+
     // get user's information
     let headers = {
         "Content-Type": "application/json",
