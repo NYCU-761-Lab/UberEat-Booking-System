@@ -7,6 +7,7 @@ from werkzeug.security import check_password_hash
 
 class UserModel(db.Model):
     __tablename__ = 'user'
+    __table_args__ = {'extend_existing': True}
 
     # string limit length: 256
     account = db.Column(db.String(256), unique = True, nullable = False, primary_key = True)
@@ -21,6 +22,8 @@ class UserModel(db.Model):
     # foreign key part, later, wail until we have other models
     # we can get the user information by
     # ShopModel.user or ProductModel.user
+    # from app.models.shop import ShopModel
+    # from app.models.product import ProductModel
     db_user_shop = db.relationship("ShopModel", backref="user")
     db_user_product = db.relationship("ProductModel", backref="user")
 

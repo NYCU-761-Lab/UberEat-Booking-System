@@ -2,6 +2,8 @@ from app.db import db
 
 class ProductModel(db.Model):
     __tablename__ = 'product'
+    __table_args__ = {'extend_existing': True}
+
 
     # string limit length: 256
     # the picture will store as the url(String type) to access it, 

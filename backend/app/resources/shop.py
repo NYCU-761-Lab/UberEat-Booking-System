@@ -5,6 +5,7 @@ from models.user import UserModel
 from models.shop import ShopModel
 from .check_function import check_username, is_float
 import ast
+from haversine import haversine, Unit
 
 
 ##### register ########################################################################
@@ -86,12 +87,15 @@ class shop_name_filter(Resource):
                         help = 'This field cannot be left blank.')
 
     # 2. filter function
-    def get(self):
+    def post(self):
         # 2-1. receive the data from the front end
         data = shop_name_filter.parser.parse_args()
         ask_shop_name     = data['ask_shop_name']
 
         # 2-2. check if "ask_shop_name" is in db
+        valid_shops = ShopModel.query.filter(ShopModel.shop_name.ilike(f'%{ask_shop_name}%')).all()  # query will return a list of tuple
+        valid_shops_name = [valid_shops_entity.shop_name for valid_shops_entity in valid_shops]
+        return { 'valid_shops_name': valid_shops_name }, 200
         
 
 class shop_distance_filter(Resource):
@@ -99,21 +103,37 @@ class shop_distance_filter(Resource):
     # 1. set up the request arguments field
     parser = reqparse.RequestParser()
     # need user_account to count for the relative distance
-    parser.add_argument('user_account', type = str, required = True, 
-                        help = 'This field cannot be left blank.')
     parser.add_argument('req_distance', type = str, required = True, 
                         help = 'This field cannot be left blank.')
 
     # 2. filter function
-    def get(self):
-        # 2-1. receive the data from the front end
+    @jwt_required(optional = True)
+    def post(self):
+        # 2-1. get the user's latitude and longitude
+        user_account = get_jwt_identity()
+        now_user = UserModel.query.filter_by(account=user_account).first()
+        now_place = (now_user.latitude, now_user.longitude)
+
         data = shop_distance_filter.parser.parse_args()
-        user_account     = data['user_account']
         req_distance     = data['req_distance']
 
+        if req_distance != 'near' and (req_distance != 'moderate' and req_distance != 'far'):
+            return { 'message': 'Invalid required distance.' }, 400
+
         # 2-2. get the all the store name in the req_distance range
+        valid_shops_name = []
+        all_shop = ShopModel.query.all()
+        for shop in all_shop:
+            dist = haversine(now_place, (shop.latitude, shop.longitude), unit=Unit.KILOMETERS)
+            if req_distance == 'near' and dist <= 2:
+                valid_shops_name.append(shop.shop_name)
+            elif req_distance == 'moderate' and (2 < dist and dist <= 5):
+                valid_shops_name.append(shop.shop_name)
+            elif req_distance == 'far' and (5 < dist):  # far
+                valid_shops_name.append(shop.shop_name)
 
-
+        return { 'valid_shops_name': valid_shops_name }, 200
+        
 
 class shop_type_filter(Resource):
     
