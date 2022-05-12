@@ -9,8 +9,8 @@ from haversine import haversine, Unit
 
 ##### register ########################################################################
 
+# 1. 註冊商店
 class shop_register(Resource):
-    
     # 1. set up the request arguments field
     parser = reqparse.RequestParser()
     parser.add_argument('shop_name', type = str, required = True, 
@@ -77,8 +77,9 @@ class shop_register(Resource):
 
 ##### shop filter ########################################################################
 
-class shop_name_filter(Resource):
-    
+# 2. 過濾店名
+class shop_name_filter(Resource):   
+
     parser = reqparse.RequestParser()
     parser.add_argument('ask_shop_name', type = str, required = True, 
                         help = 'This field cannot be left blank.')
@@ -93,8 +94,9 @@ class shop_name_filter(Resource):
         return { 'valid_shops_name': valid_shops_name }, 200
         
 
+# 3. 過濾店距離
 class shop_distance_filter(Resource):
-    
+
     parser = reqparse.RequestParser()
     # need user_account to count for the relative distance
     parser.add_argument('req_distance', type = str, required = True, 
@@ -129,7 +131,7 @@ class shop_distance_filter(Resource):
 
         return { 'valid_shops_name': valid_shops_name }, 200
         
-
+# 4. 過濾店類別
 class shop_type_filter(Resource):
     
     parser = reqparse.RequestParser()
@@ -148,10 +150,11 @@ class shop_type_filter(Resource):
 ##### get shop info ########################################################################
 # 1. shop_type
 # 2. shop_distance
-
 # 3. shop_latitude
 # 4. shop_longitude
+# 5. shop_name_of_a_user
 
+# 5. 顯示店類別
 class get_shop_type(Resource):
     
     parser = reqparse.RequestParser()
@@ -170,7 +173,7 @@ class get_shop_type(Resource):
         return { 'shop_type of the shop_name': query.shop_type }, 200
 
 
-
+# 6. 顯示店距離
 class get_shop_distance(Resource):
     
     parser = reqparse.RequestParser()
@@ -197,7 +200,7 @@ class get_shop_distance(Resource):
         return { 'Distance to the shop (km)': dist }, 200
 
 
-
+# 7. 顯示店經度
 class get_shop_latitude(Resource):
 
     parser = reqparse.RequestParser()
@@ -216,7 +219,7 @@ class get_shop_latitude(Resource):
         return { 'latitude of the shop_name': query.latitude }, 200
 
 
-
+# 8. 顯示店緯度
 class get_shop_longitude(Resource):
     
     parser = reqparse.RequestParser()
@@ -235,6 +238,7 @@ class get_shop_longitude(Resource):
         return { 'longitude of the shop_name': query.longitude }, 200
 
 
+# 9. 查詢店名
 class get_shop_name_of_user(Resource):
 
     @jwt_required(optional = True)
