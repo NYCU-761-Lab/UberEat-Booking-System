@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 import config_secret
 from resources.user import auth_register, auth_login, auth_check_account, auth_account_information, auth_location
-from resources.shop import shop_register
+from resources.shop import shop_register, shop_name_filter, shop_distance_filter
 
 app = Flask(__name__)
 
@@ -56,11 +56,15 @@ api = Api(app)
 api.add_resource( auth_register,  "/auth/register")
 api.add_resource( auth_login,  "/auth/login")
 api.add_resource( auth_check_account,  "/auth/check_account")
-api.add_resource( auth_account_information, "/auth/info")
-api.add_resource( auth_location, "/auth/location")
+api.add_resource( auth_account_information, "/auth/get_account_info") # original: /auth/info (如果一次都沒改過的話是 /auth)
+api.add_resource( auth_location, "/auth/edit_location") # original: /auth/location
 
 # shop api
 api.add_resource( shop_register, "/shop/register")
+api.add_resource( shop_name_filter, "/shop/name_filter")
+api.add_resource( shop_distance_filter, "/shop/distance_filter")
+
+
 
 
 if __name__ == '__main__':
