@@ -1,10 +1,15 @@
 from app.db import db
 from werkzeug.security import check_password_hash
 
+# need to find from the root app, or will have circular import
+# from app.models.shop import ShopModel
+# from app.models.product import ProductModel
+
 class UserModel(db.Model):
     __tablename__ = 'user'
+    __table_args__ = {'extend_existing': True}
 
-    # now is no limit of length (not sure if is ok for sqlite) <fix>
+    # string limit length: 256
     account = db.Column(db.String(256), unique = True, nullable = False, primary_key = True)
     password = db.Column(db.String(256), nullable = False)
     username = db.Column(db.String(256), nullable = False)
@@ -15,6 +20,12 @@ class UserModel(db.Model):
 
 
     # foreign key part, later, wail until we have other models
+    # we can get the user information by
+    # ShopModel.user or ProductModel.user
+    # from app.models.shop import ShopModel
+    # from app.models.product import ProductModel
+    db_user_shop = db.relationship("ShopModel", backref="user")
+    db_user_product = db.relationship("ProductModel", backref="user")
 
     def __init__(self, account, password, username, phone_number, latitude, longitude, role):
         self.account = account
@@ -41,4 +52,10 @@ class UserModel(db.Model):
         query = cls.query.filter_by(account=account).first()
         query.latitude = latitude
         query.longitude = longitude
+        db.session.commit()
+
+    @classmethod
+    def edit_role(cls, account):
+        query = cls.query.filter_by(account=account).first()
+        query.role = 'manager'
         db.session.commit()
