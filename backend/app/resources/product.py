@@ -65,7 +65,7 @@ class product_register(Resource):
             fh.write(base64.urlsafe_b64decode(picture_base64))
 
         # tmp shop id: 1
-        product = ProductModel(1, product_name, img_inside_url, ast.literal_eval(price), ast.literal_eval(quantity), user_account, shop.shop_name)
+        product = ProductModel(2, product_name, img_inside_url, ast.literal_eval(price), ast.literal_eval(quantity), user_account, shop.shop_name)
         product.save_to_db()
         return {'message': 'Product has been created successfully.'}, 200
 
