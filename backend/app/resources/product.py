@@ -1,14 +1,22 @@
 from flask import jsonify
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 import json
 import werkzeug
+from models.user import UserModel
+from models.shop import ShopModel
+from models.product import ProductModel
+import numpy as np
+import cv2
+import base64
+import ast
+
 
 ##### register ########################################################################
 
+# 1. 註冊餐點
 class product_register(Resource):
-    
-    # 1. set up the request arguments field
+
     parser = reqparse.RequestParser()
     parser.add_argument('product_name', type = str, required = True, 
                         help = 'This field cannot be left blank.')
@@ -16,42 +24,59 @@ class product_register(Resource):
                         help = 'This field cannot be left blank.')
     parser.add_argument('quantity', type = str, required = True, 
                         help = 'This field cannot be left blank.')
-
     # not sure if the picture part is correct
-    parser.add_argument('picture', type = werkzeug.FileStorage, required = True, location='files',
-                        help = 'This field cannot be left blank.')
-    # owner account
-    parser.add_argument('user_account', type = str, required = True, 
+    # parser.add_argument('picture', type = werkzeug.FileStorage, required = True, location='form',
+    #                     help = 'This field cannot be left blank.')
+    parser.add_argument('picture', type = str, required = True, 
                         help = 'This field cannot be left blank.')
     
 
     # 2. register function
+    @jwt_required(optional = True)
     def post(self):
-        # 2-1. receive the data from the front end
+        user_account = get_jwt_identity()
+        # 2-1. check user & shop
+        user = UserModel.query.filter_by(account = user_account).one_or_none() 
+        if not user:
+            return {'message': 'Invalid user account.'}, 401
+
+        shop = ShopModel.query.filter_by(owner = user_account).one_or_none()
+        if not shop:
+            return {'message': 'This user has not registered a shop. Please register a shop first.'}, 401
+
         data = product_register.parser.parse_args()
         product_name     = data['product_name']
         price    = data['price']
         quantity    = data['quantity']
-        picture   = data['picture']
-        user_account = data['user_account']
+        picture_base64   = data['picture']
 
-        # 2-2. format & unique filter
-        # check format first, than check unique
-        """
-        notice
-            format:
-                1. string 格式正確性
-                2. 用 string 接收到的 float / int 是否真的為 float / int 格式，
-                   是的話再轉數字並判斷 range 是否符合。
-                   ref: resource/user.py    latitude, longitude part
-            unique:
-                1. ckeck 是否被註冊過
+        # 2-2. price, quantity: unsigned int format filter
+        if not price.isdigit():
+            return {'message': 'The price type is not unsigned integer.'}, 400
+        elif not quantity.isdigit():
+            return {'message': 'The quantity type is not unsigned integer.'}, 400
 
-            img 接收與處理: https://stackoverflow.com/questions/28982974/flask-restful-upload-image
-        """
-        
         # 2-3. if pass the test than save to db
+        # deal with the picture first
+        # img_decode = base64.b64decode(picture_base64)
+        img_inside_url = "/Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/product_image/" + user_account + "_" + product_name + ".jpeg"
+        # cv2.imwrite(img_inside_url, img_decode)
+        with open(img_inside_url, "wb") as fh:
+            fh.write(base64.urlsafe_b64decode(picture_base64))
 
+        # tmp shop id: 1
+        product = ProductModel(1, product_name, img_inside_url, ast.literal_eval(price), ast.literal_eval(quantity), user_account, shop.shop_name)
+        product.save_to_db()
+        return {'message': 'Product has been created successfully.'}, 200
+
+        # # convert to numpy array
+        # npimg = np.fromstring(stream, np.uint8)
+        # # convert numpy array to image
+        # img = cv2.imdecode(npimg, cv2.IMREAD_UNCHANGED)
+        # img_inside_url = "/Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/product_image" + user_account + product_name + ".jpg"
+        # cv2.imwrite( img_inside_url, img)
+        # ast.literal_eval(price)
+        # ast.literal_eval(quantity)
 
 
 ##### product information of a shop ########################################################################
@@ -65,7 +90,6 @@ class product_register(Resource):
         where owner = user_account
 """
 class product_of_a_shop(Resource):
-
     # 1. get list (all)
     parser_get = reqparse.RequestParser()
     # product owner's account, same as shop owner's account

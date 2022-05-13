@@ -16,15 +16,17 @@ class ProductModel(db.Model):
     
     # foreign key part, later, wail until we have other models
     # db.ForeignKey('table_name.primary_key')
-    user_account = db.Column(db.String(256), db.ForeignKey('user.account'), unique = True, nullable = False)
-    shop_name = db.Column(db.String(256), db.ForeignKey('shop.shop_name'), unique = True, nullable = False)
+    owner = db.Column(db.String(256), db.ForeignKey('user.account'), unique = True, nullable = False)
+    belong_shop_name = db.Column(db.String(256), db.ForeignKey('shop.shop_name'), unique = True, nullable = False)
     
-    def __init__(self, product_id, product_name, picture, price, quantity):
+    def __init__(self, product_id, product_name, picture, price, quantity, user_account, shop_name):
         self.product_id = product_id
         self.product_name = product_name
         self.picture = picture
         self.price = price
         self.quantity = quantity
+        self.owner = user_account
+        self.belong_shop_name = shop_name
 
     def save_to_db(self):
         db.session.add(self)

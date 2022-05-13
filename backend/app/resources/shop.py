@@ -72,7 +72,7 @@ class shop_register(Resource):
         UserModel.edit_role(user_account)
 
         # 2-5. return
-        return {'message': 'Shop has been registered successfully. And the role changed to manager.',}, 200
+        return {'message': 'Shop has been registered successfully. And the role changed to manager.'}, 200
 
 
 ##### shop filter ########################################################################
