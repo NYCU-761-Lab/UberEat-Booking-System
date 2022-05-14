@@ -238,7 +238,7 @@ class get_shop_longitude(Resource):
         return {'longitude of the shop_name': query.longitude }, 200
 
 
-# 9. 查詢店名
+# 9. 查詢某 user 開的店名
 class get_shop_name_of_user(Resource):
 
     @jwt_required(optional = True)
@@ -254,3 +254,19 @@ class get_shop_name_of_user(Resource):
 
         # 2-2. get the all the store name in the req_distance range
         return {'shop_name of the user': shop.shop_name }, 200
+
+
+# 10. 檢查店名是否被註冊過
+class shop_check_name(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('shop_name', type = str, required = True, 
+                        help = 'This field cannot be left blank.')
+    def post(self):
+        data = shop_check_name.parser.parse_args()
+        shop_name = data['shop_name']
+        query = ShopModel.query.filter_by(shop_name = shop_name).first()  # shop_name is unique
+        # 2-1. check if the shop exist
+        if query:
+            return {'message': 'The shop name is already being used.'}, 409
+        else:
+            return {'message': 'The shop name has not been used.'}, 200
