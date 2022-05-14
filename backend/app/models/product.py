@@ -4,24 +4,19 @@ class ProductModel(db.Model):
     __tablename__ = 'product'
     __table_args__ = {'extend_existing': True}
 
-
-    # string limit length: 256
-    # the picture will store as the url(String type) to access it, 
-    # "file route" + "product_id", use product_id.jpg as its name
-    product_id = db.Column(db.String(32), unique = True, nullable = False, primary_key = True)
-    product_name = db.Column(db.String(256), nullable = False)
+    # composite primary key: (product_name, belong_shop_name) -> this tuple need to be unique -> no need product_id anymore
+    # product_name & shop_name & owner any single of them need to be unique!!!!
+    product_name = db.Column(db.String(256), nullable = False, primary_key = True)
     picture = db.Column(db.String(256), nullable = False)
     price = db.Column(db.Float(256), nullable = False)
     quantity = db.Column(db.Integer(), nullable = False)  # need to be int
     
-    # foreign key part, later, wail until we have other models
     # db.ForeignKey('table_name.primary_key')
-    # These 2 no need to be unique!!!
+    # These 2 no need not to be unique!!! -> we can have multiple products belong to a shop or owner
     owner = db.Column(db.String(256), db.ForeignKey('user.account'), nullable = False)
-    belong_shop_name = db.Column(db.String(256), db.ForeignKey('shop.shop_name'), nullable = False)
+    belong_shop_name = db.Column(db.String(256), db.ForeignKey('shop.shop_name'), nullable = False, primary_key = True)
     
-    def __init__(self, product_id, product_name, picture, price, quantity, user_account, shop_name):
-        self.product_id = product_id
+    def __init__(self, product_name, picture, price, quantity, user_account, shop_name):
         self.product_name = product_name
         self.picture = picture
         self.price = price
@@ -34,5 +29,5 @@ class ProductModel(db.Model):
         db.session.commit()
 
     @classmethod
-    def find_by_product_id(cls, product_id):
-        return cls.query.filter_by(product_id=product_id).first()
+    def find_by_product_name(cls, product_name):
+        return cls.query.filter_by(product_name=product_name).first()

@@ -24,25 +24,21 @@ class product_register(Resource):
                         help = 'This field cannot be left blank.')
     parser.add_argument('quantity', type = str, required = True, 
                         help = 'This field cannot be left blank.')
-    # not sure if the picture part is correct
-    # parser.add_argument('picture', type = werkzeug.FileStorage, required = True, location='form',
-    #                     help = 'This field cannot be left blank.')
     parser.add_argument('picture', type = str, required = True, 
                         help = 'This field cannot be left blank.')
     
-
     # 2. register function
     @jwt_required(optional = True)
     def post(self):
         user_account = get_jwt_identity()
-        # 2-1. check user & shop
+        # 2-1. check user & shop is valid
         user = UserModel.query.filter_by(account = user_account).one_or_none() 
         if not user:
             return {'message': 'Invalid user account.'}, 401
 
         shop = ShopModel.query.filter_by(owner = user_account).one_or_none()
         if not shop:
-            return {'message': 'This user has not registered a shop. Please register a shop first.'}, 401
+            return {'message': 'This user has not registered a shop. Please register a shop first.'}, 400
 
         data = product_register.parser.parse_args()
         product_name     = data['product_name']
@@ -50,34 +46,25 @@ class product_register(Resource):
         quantity    = data['quantity']
         picture_base64   = data['picture']
 
-        # 2-2. price, quantity: unsigned int format filter
+        # 2-2. price, quantity: unsigned int format filter, check the product_name is unique in the same shop
         if not price.isdigit():
             return {'message': 'The price type is not unsigned integer.'}, 400
         elif not quantity.isdigit():
             return {'message': 'The quantity type is not unsigned integer.'}, 400
+        elif ProductModel.query.filter_by( product_name = product_name, belong_shop_name = shop.shop_name ).one_or_none():
+            return {'message': 'The product name has already been registered in the shop.'}, 409
 
         # 2-3. if pass the test than save to db
-        # deal with the picture first
-        # img_decode = base64.b64decode(picture_base64)
-        img_inside_url = "/Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/product_image/" + user_account + "_" + product_name + ".jpeg"
-        # cv2.imwrite(img_inside_url, img_decode)
+        # can save type: jpg(jpeg), png, bmp (svg will fail)
+        img_type = picture_base64[ picture_base64.find("/")+1 : picture_base64.find(";") ]
+        pure_picture_base64 = picture_base64[ picture_base64.find(",")+1 :]  # delete header
+        img_inside_url = "/Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/product_image/" + user_account + "_" + product_name + "." + img_type
         with open(img_inside_url, "wb") as fh:
-            fh.write(base64.urlsafe_b64decode(picture_base64))
+            fh.write(base64.urlsafe_b64decode(pure_picture_base64))
 
-        # tmp shop id: 1
-        product = ProductModel(2, product_name, img_inside_url, ast.literal_eval(price), ast.literal_eval(quantity), user_account, shop.shop_name)
+        product = ProductModel(product_name, img_inside_url, ast.literal_eval(price), ast.literal_eval(quantity), user_account, shop.shop_name)
         product.save_to_db()
         return {'message': 'Product has been created successfully.'}, 200
-
-        # # convert to numpy array
-        # npimg = np.fromstring(stream, np.uint8)
-        # # convert numpy array to image
-        # img = cv2.imdecode(npimg, cv2.IMREAD_UNCHANGED)
-        # img_inside_url = "/Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/product_image" + user_account + product_name + ".jpg"
-        # cv2.imwrite( img_inside_url, img)
-        # ast.literal_eval(price)
-        # ast.literal_eval(quantity)
-
 
 ##### product information of a shop ########################################################################
 
