@@ -97,7 +97,7 @@ class auth_login(Resource):
         # 2-2. check account & password
         user = UserModel.query.filter_by(account = account).one_or_none()
         if not user:
-            return {'message': 'Wrong account.'}, 401
+            return {'message': 'This account has not registered yet.'}, 401
         elif not user.check_password(password):
             return {'message': 'Wrong password.'}, 401
 
