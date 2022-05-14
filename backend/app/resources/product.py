@@ -78,6 +78,7 @@ class product_register(Resource):
         where owner = user_account
 """
 
+# 2. 修改餐點價格
 class product_edit_price(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('product_name', type = str, required = True, 
@@ -103,7 +104,7 @@ class product_edit_price(Resource):
         
         product = ProductModel.query.filter_by( product_name = product_name, owner = user.account ).one_or_none()
         if not product:
-            return {'message': 'Invalid product name. The shop does not have this product'}, 400
+            return {'message': 'Invalid product name. The shop does not have this product.'}, 400
 
         # 2. check if the edit_price is valid
         if not edit_price.isdigit():
@@ -113,7 +114,8 @@ class product_edit_price(Resource):
         ProductModel.edit_price(product_name, product.belong_shop_name, ast.literal_eval(edit_price))
         return {'message': 'The price has been edited successfully.'}, 200
 
-        
+
+# 3. 修改餐點數量
 class product_edit_quantity(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('product_name', type = str, required = True, 
@@ -150,7 +152,7 @@ class product_edit_quantity(Resource):
         return {'message': 'The quantity has been edited successfully.'}, 200
 
 
-
+# 4. 刪除餐點
 class product_delete(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('product_name', type = str, required = True, 
@@ -177,13 +179,14 @@ class product_delete(Resource):
 
         # 3. pass the test than save edit to db
         ProductModel.delete_product(product_name, product.belong_shop_name)
-        os.remove(product.picture)
+        os.remove(product.picture)  # delete picture img
         return {'message': 'The product has been delete successfully.'}, 200
 
 
 ##### product filter ########################################################################
 ### all return shop_name!!! ###
 
+# 5. 過濾餐點價格
 class product_price_filter(Resource):
     
     parser = reqparse.RequestParser()
@@ -230,6 +233,8 @@ class product_price_filter(Resource):
         
         return {'valid_shops_name': valid_shop_name }, 200    
 
+
+# 6. 過濾餐點名稱
 class product_name_filter(Resource):
 
     parser = reqparse.RequestParser()
@@ -242,12 +247,16 @@ class product_name_filter(Resource):
 
         # 1. check if the product name is in db
         valid_products = ProductModel.query.filter(ProductModel.product_name.ilike(f'%{ask_product_name}%')).all()  # query will return a list of tuple
-        valid_product_name = [valid_product_entity.product_name for valid_product_entity in valid_products]
-        return {'valid_products_name': valid_product_name }, 200
+        valid_shop_name = []
+        for valid_product_entity in valid_products:
+            if valid_product_entity.belong_shop_name not in valid_shop_name:
+                valid_shop_name.append(valid_product_entity.belong_shop_name)
+        return {'valid_shops_name': valid_shop_name }, 200
 
 
 ##### get product info ########################################################################
 
+# 7. 查詢餐點資訊 - name, picture_url, price, quantity
 class get_product_info_of_a_shop(Resource):
 
     parser = reqparse.RequestParser()
