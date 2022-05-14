@@ -146,7 +146,7 @@ class auth_account_information(Resource):
                 'role': role}, 200
 
 
-class auth_location(Resource):
+class auth_edit_location(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('latitude', type = str, required = True, 
                         help = 'This field cannot be left blank.')
@@ -162,7 +162,7 @@ class auth_location(Resource):
             return {'message': 'No this account.'}, 401
         
         # check value
-        data = auth_location.parser.parse_args()
+        data = auth_edit_location.parser.parse_args()
         latitude    = data['latitude']
         longitude   = data['longitude']
 
