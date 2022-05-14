@@ -30,7 +30,7 @@
 
     <ul class="nav nav-tabs">
       <li class="active"><a href="#home">Home</a></li>
-      <li><a href="#menu1">Shop</a></li>
+      <li id="shopItem"><a href="#menu1">Shop</a></li>
       <li><a href="#menu2">Log Out</a></li>
 
 
@@ -112,42 +112,39 @@
         <!-- 
                 
              -->
+        <!-- Search Filter -->
         <h3>Search</h3>
         <div class=" row  col-xs-8">
           <form class="form-horizontal" action="/action_page.php">
             <div class="form-group">
               <label class="control-label col-sm-1" for="Shop">Shop</label>
               <div class="col-sm-5">
-                <input type="text" class="form-control" placeholder="Enter Shop name">
+                <input type="text" class="form-control askShopPlace" placeholder="Enter Shop name">
               </div>
+
               <label class="control-label col-sm-1" for="distance">distance</label>
               <div class="col-sm-5">
-
-
                 <select class="form-control" id="sel1">
                   <option>near</option>
-                  <option>medium </option>
+                  <option>moderate</option>
                   <option>far</option>
-
                 </select>
+                <div>near: within 2 km</div>
+                <div>moderate: 2~5 km</div>
+                <div>far: above 5 km</div>
               </div>
-
             </div>
 
             <div class="form-group">
-
               <label class="control-label col-sm-1" for="Price">Price</label>
               <div class="col-sm-2">
-
                 <input type="text" class="form-control">
-
               </div>
               <label class="control-label col-sm-1" for="~">~</label>
               <div class="col-sm-2">
-
                 <input type="text" class="form-control">
-
               </div>
+
               <label class="control-label col-sm-1" for="Meal">Meal</label>
               <div class="col-sm-5">
                 <input type="text" list="Meals" class="form-control" id="Meal" placeholder="Enter Meal">
@@ -160,23 +157,24 @@
 
             <div class="form-group">
               <label class="control-label col-sm-1" for="category"> category</label>
-            
-              
                 <div class="col-sm-5">
-                  <input type="text" list="categorys" class="form-control" id="category" placeholder="Enter shop category">
+                  <input type="text" list="categorys" class="form-control askTypePlace" id="category" placeholder="Enter shop category">
                   <datalist id="categorys">
-                    <option value="fast food">
-               
+                    <option value="American">
+                    <option value="Japanese">
+                    <option value="Italian">
+                    <!-- 這邊可以補充我們有哪些類型的食物 -->
                   </datalist>
                 </div>
-                <button type="submit" style="margin-left: 18px;"class="btn btn-primary">Search</button>
+
+                <button type="button" style="margin-left: 18px;"class="btn btn-primary" id="shopSearchBtn">Search</button>
               
             </div>
           </form>
         </div>
         <div class="row">
           <div class="  col-xs-8">
-            <table class="table" style=" margin-top: 15px;">
+            <table class="table searchResult" style=" margin-top: 15px;">
               <thead>
                 <tr>
                   <th scope="col">#</th>
@@ -188,18 +186,16 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <th scope="row">1</th>
-               
-                  <td>macdonald</td>
-                  <td>fast food</td>
-                
-                  <td>near </td>
-                  <td>  <button type="button" class="btn btn-info " data-toggle="modal" data-target="#macdonald">Open menu</button></td>
-            
-                </tr>
-           
-
+                <!-- 動態更新，顯示符合條件的店家 -->
+                <!-- 
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>macdonald</td>
+                    <td>fast food</td>            
+                    <td>near </td>
+                    <td>  <button type="button" class="btn btn-info " data-toggle="modal" data-target="#macdonald">Open menu</button></td>
+                  </tr>  
+              -->
               </tbody>
             </table>
 
@@ -276,6 +272,7 @@
 
         </div>
       </div>
+      <!-- Shop Page -->
       <div id="menu1" class="tab-pane fade">
 
         <h3> Start a business </h3>
@@ -283,19 +280,20 @@
           <div class="row">
             <div class="col-xs-2">
               <label for="ex5">shop name</label>
-              <input class="form-control" id="ex5" placeholder="macdonald" type="text" >
+              <input class="form-control registerShopName" id="ex5" placeholder="macdonald" type="text" >
+              <p id="shopNameText"></p>
             </div>
             <div class="col-xs-2">
               <label for="ex5">shop category</label>
-              <input class="form-control" id="ex5" placeholder="fast food" type="text" >
+              <input class="form-control registerShopCategory" id="ex5" placeholder="American" type="text" >
             </div>
             <div class="col-xs-2">
               <label for="ex6">latitude</label>
-              <input class="form-control" id="ex6" placeholder="121.00028167648875" type="text" >
+              <input class="form-control registerShopLatitude" id="ex6" placeholder="121.00028167648875" type="text" >
             </div>
             <div class="col-xs-2">
               <label for="ex8">longitude</label>
-              <input class="form-control" id="ex8" placeholder="24.78472733371133" type="text" >
+              <input class="form-control registerShopLongitude" id="ex8" placeholder="24.78472733371133" type="text" >
             </div>
           </div>
         </div>
@@ -304,7 +302,7 @@
 
         <div class=" row" style=" margin-top: 25px;">
           <div class=" col-xs-3">
-            <button type="button" class="btn btn-primary"  >register</button>
+            <button type="button" class="btn btn-primary" id="shopRegisterBtn"  >register</button>
           </div>
         </div>
         <hr>
@@ -484,6 +482,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
     -->
   <script src="js/navJquery.js"></script>
+  <script src="js/shopJquery.js"></script>
+  <script src="js/searchJquery.js"></script>
 </body>
 
 </html>

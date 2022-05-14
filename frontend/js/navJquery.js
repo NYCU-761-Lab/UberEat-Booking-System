@@ -17,7 +17,7 @@ $(document).ready(function() {
         "Accept": "application/json",
         "Authorization": "Bearer " + accessToken
     }
-    fetch(request_url + "/auth/info", {
+    fetch(request_url + "/auth/get_account_info", {
         method: 'POST',
         headers: headers,
     })
@@ -56,7 +56,7 @@ $(document).ready(function() {
                 'longitude': new_longitude
             }
 
-            fetch(request_url + "/auth/location", {
+            fetch(request_url + "/auth/edit_location", {
                 method: 'PUT',
                 headers: headers,
                 body: JSON.stringify(body)
