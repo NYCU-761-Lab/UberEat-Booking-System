@@ -18,7 +18,7 @@ class ProductModel(db.Model):
     
     def __init__(self, product_name, picture, price, quantity, user_account, shop_name):
         self.product_name = product_name
-        self.picture = picture
+        self.picture = picture            # url of local host to access the picture
         self.price = price
         self.quantity = quantity
         self.owner = user_account
@@ -31,3 +31,21 @@ class ProductModel(db.Model):
     @classmethod
     def find_by_product_name(cls, product_name):
         return cls.query.filter_by(product_name=product_name).first()
+
+    @classmethod
+    def edit_price(cls, product_name, belong_shop_name, edit_price):
+        query = cls.query.filter_by(product_name=product_name, belong_shop_name = belong_shop_name).first()
+        query.price = edit_price
+        db.session.commit()
+
+    @classmethod
+    def edit_quantity(cls, product_name, belong_shop_name, edit_quantity):
+        query = cls.query.filter_by(product_name=product_name, belong_shop_name = belong_shop_name).first()
+        query.quantity = edit_quantity
+        db.session.commit()
+    
+    @classmethod
+    def delete_product(cls, product_name, belong_shop_name):
+        query = cls.query.filter_by(product_name=product_name, belong_shop_name = belong_shop_name).first()
+        db.session.delete(query)
+        db.session.commit()

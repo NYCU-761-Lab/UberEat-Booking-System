@@ -10,6 +10,7 @@ import numpy as np
 import cv2
 import base64
 import ast
+import os
 
 
 ##### register ########################################################################
@@ -66,7 +67,7 @@ class product_register(Resource):
         product.save_to_db()
         return {'message': 'Product has been created successfully.'}, 200
 
-##### product information of a shop ########################################################################
+##### edit product ########################################################################
 
 """
     use user_account to get all the product in the shop
@@ -76,44 +77,108 @@ class product_register(Resource):
         from product_table
         where owner = user_account
 """
-class product_of_a_shop(Resource):
-    # 1. get list (all)
-    parser_get = reqparse.RequestParser()
-    # product owner's account, same as shop owner's account
-    parser_get.add_argument('user_account', type = str, required = True, 
+
+class product_edit_price(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('product_name', type = str, required = True, 
+                        help = 'This field cannot be left blank.')
+    parser.add_argument('edit_price', type = str, required = True, 
                         help = 'This field cannot be left blank.')
 
-    # 2. edit certain product
-    parser_edit = reqparse.RequestParser()
-    parser_get.add_argument('user_account', type = str, required = True, 
-                        help = 'This field cannot be left blank.')
-    parser_edit.add_argument('product_id', type = str, required = True, 
-                        help = 'This field cannot be left blank.')
-        
-
-    # 3. delete certain product
-    parser_delete = reqparse.RequestParser()
-    parser_get.add_argument('user_account', type = str, required = True, 
-                        help = 'This field cannot be left blank.')
-    parser_delete.add_argument('product_id', type = str, required = True, 
-                        help = 'This field cannot be left blank.')
-
-
-    # 1. get list (all), get all the product belong to user_account
-    @jwt_required(optional = True)
-    def get(self):
-        pass
-
-    # 2. edit certain product, need to check if the user_account is the product owner
-    # product_price, product_number
     @jwt_required(optional = True)
     def put(self):
-        pass
+        user_account = get_jwt_identity()
+        data = product_edit_price.parser.parse_args()
+        product_name     = data['product_name']
+        edit_price       = data['edit_price']
+        
+        # 1. check if the user own a shop and the product is in that shop
+        user = UserModel.query.filter_by(account = user_account).one_or_none() 
+        if not user:
+            return {'message': 'Invalid user account.'}, 401
 
-    # 3. delete certain product, need to check if the user_account is the product owner
+        shop = ShopModel.query.filter_by(owner = user_account).one_or_none() 
+        if not shop:
+            return {'message': 'This user has not registered a shop.'}, 400
+        
+        product = ProductModel.query.filter_by( product_name = product_name, owner = user.account ).one_or_none()
+        if not product:
+            return {'message': 'Invalid product name. The shop does not have this product'}, 400
+
+        # 2. check if the edit_price is valid
+        if not edit_price.isdigit():
+            return {'message': 'The price type is not unsigned integer.'}, 400
+
+        # 3. pass the test than save edit to db
+        ProductModel.edit_price(product_name, product.belong_shop_name, ast.literal_eval(edit_price))
+        return {'message': 'The price has been edited successfully.'}, 200
+
+        
+class product_edit_quantity(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('product_name', type = str, required = True, 
+                        help = 'This field cannot be left blank.')
+    parser.add_argument('edit_quantity', type = str, required = True, 
+                        help = 'This field cannot be left blank.')
+
+    @jwt_required(optional = True)
+    def put(self):
+        user_account = get_jwt_identity()
+        data = product_edit_quantity.parser.parse_args()
+        product_name     = data['product_name']
+        edit_quantity       = data['edit_quantity']
+        
+        # 1. check if the user own a shop and the product is in that shop
+        user = UserModel.query.filter_by(account = user_account).one_or_none() 
+        if not user:
+            return {'message': 'Invalid user account.'}, 401
+
+        shop = ShopModel.query.filter_by(owner = user_account).one_or_none() 
+        if not shop:
+            return {'message': 'This user has not registered a shop.'}, 400
+        
+        product = ProductModel.query.filter_by( product_name = product_name, owner = user.account ).one_or_none()
+        if not product:
+            return {'message': 'Invalid product name. The shop does not have this product'}, 400
+
+        # 2. check if the edit_quantity is valid
+        if not edit_quantity.isdigit():
+            return {'message': 'The quantity type is not unsigned integer.'}, 400
+
+        # 3. pass the test than save edit to db
+        ProductModel.edit_quantity(product_name, product.belong_shop_name, ast.literal_eval(edit_quantity))
+        return {'message': 'The quantity has been edited successfully.'}, 200
+
+
+
+class product_delete(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('product_name', type = str, required = True, 
+                        help = 'This field cannot be left blank.')
+
     @jwt_required(optional = True)
     def delete(self):
-        pass
+        user_account = get_jwt_identity()
+        data = product_delete.parser.parse_args()
+        product_name     = data['product_name']
+        
+        # 1. check if the user own a shop and the product is in that shop
+        user = UserModel.query.filter_by(account = user_account).one_or_none() 
+        if not user:
+            return {'message': 'Invalid user account.'}, 401
+        
+        shop = ShopModel.query.filter_by(owner = user_account).one_or_none() 
+        if not shop:
+            return {'message': 'This user has not registered a shop.'}, 400
+
+        product = ProductModel.query.filter_by( product_name = product_name, owner = user.account ).one_or_none()
+        if not product:
+            return {'message': 'Invalid product name. The shop does not have this product.'}, 400
+
+        # 3. pass the test than save edit to db
+        ProductModel.delete_product(product_name, product.belong_shop_name)
+        os.remove(product.picture)
+        return {'message': 'The product has been delete successfully.'}, 200
 
 
 ##### product filter ########################################################################
@@ -121,61 +186,84 @@ class product_of_a_shop(Resource):
 
 class product_price_filter(Resource):
     
-    # 1. set up the request arguments field
     parser = reqparse.RequestParser()
 
     # 可以為空，但不會都為空，不然前端不會送 req!!!
+    # 空："null"
     parser.add_argument('price_lower_bound', type = str)
     parser.add_argument('price_upper_bound', type = str)
 
-    # 2. filter function
-    def get(self):
-        # 2-1. receive the data from the front end
+    def post(self):
+        data = product_price_filter.parser.parse_args()
+        price_lower_bound     = data['price_lower_bound']
+        price_upper_bound     = data['price_upper_bound']
+        if price_lower_bound != "null" and (not price_lower_bound.isdigit()):
+            return {'message': 'The value of price lower bound is not unsigned integer or null.' }, 400
+        elif price_upper_bound != "null" and (not price_upper_bound.isdigit()):
+            return {'message': 'The value of price upper bound is not unsigned integer or null.' }, 400
 
-        # 2-2. get all the shop that "one of their product"'s price is lower_bound<= &  <= upper_bound
+        # 1. get all the shop that "one of their product"'s price is lower_bound<= &  <= upper_bound
         """
             1. 如果 lower_bound 為空
             2. 如果 upper_bound 為空
             3. 都不為空
 
-            收進來 string 要先判斷是否為 float type - check_function.is_float(str)
+            收進來 string 要先判斷是否為 unsigned int type - isdigit()
         """
-        pass
-
-
+        valid_shop_name = []
+        all_product = ProductModel.query.all()
+        for product in all_product:
+            if price_lower_bound == "null":
+                if (product.price <= ast.literal_eval(price_upper_bound)):
+                    if (product.belong_shop_name not in valid_shop_name):
+                        valid_shop_name.append(product.belong_shop_name)
+                
+            elif price_upper_bound == "null":
+                if (ast.literal_eval(price_lower_bound) <= product.price):
+                    if (product.belong_shop_name not in valid_shop_name):
+                        valid_shop_name.append(product.belong_shop_name)
+    
+            else:  
+                if (ast.literal_eval(price_lower_bound) <= product.price and product.price <= ast.literal_eval(price_upper_bound)):
+                    if (product.belong_shop_name not in valid_shop_name):
+                        valid_shop_name.append(product.belong_shop_name)
+        
+        return {'valid_shops_name': valid_shop_name }, 200    
 
 class product_name_filter(Resource):
 
-    # 1. set up the request arguments field
     parser = reqparse.RequestParser()
     parser.add_argument('ask_product_name', type = str, required = True, 
                         help = 'This field cannot be left blank.')
 
-    # 2. filter function
-    def get(self):
-        # 2-1. receive the data from the front end
+    def post(self):
         data = product_name_filter.parser.parse_args()
         ask_product_name     = data['ask_product_name']
 
-        # 2-2. check if the product name is in db
-        pass
+        # 1. check if the product name is in db
+        valid_products = ProductModel.query.filter(ProductModel.product_name.ilike(f'%{ask_product_name}%')).all()  # query will return a list of tuple
+        valid_product_name = [valid_product_entity.product_name for valid_product_entity in valid_products]
+        return {'valid_products_name': valid_product_name }, 200
 
 
 ##### get product info ########################################################################
 
 class get_product_info_of_a_shop(Resource):
 
-    # 1. set up the request arguments field
     parser = reqparse.RequestParser()
     parser.add_argument('shop_name', type = str, required = True, 
                         help = 'This field cannot be left blank.')
 
-    # 2. filter function
-    def get(self):
-        # 2-1. receive the data from the front end
+    def post(self):
         data = get_product_info_of_a_shop.parser.parse_args()
         shop_name     = data['shop_name']
 
-        # 2-2. use shop_name to get all the product in the shop
-        #       return product_name, product_picture, price, number
-        pass
+        # 2. use shop_name to get all the product in the shop
+        #    return product_name, product_picture, price, number
+        query = ProductModel.query.filter_by( belong_shop_name = shop_name ).all()
+        product_list = []
+        for item in query:
+            info_list = [ item.product_name, item.picture, item.price, item.quantity ]
+            product_list.append(info_list)
+        
+        return {'Product list of the shop': product_list}, 200
