@@ -109,14 +109,13 @@ $(document).ready(function() {
             let statusCode = null;
             let headers = {
                 "Content-Type": "application/json",
-                "Accept": "application/json",
-                "Authorization": "Bearer " + accessToken
+                "Accept": "application/json"
             }
             let body = {
                 'shop_name': shopName,
             }
 
-            fetch(request_url + "/auth/check_account", {  // path等yoona寫完之後要改
+            fetch(request_url + "/shop/check_name", { 
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(body)
