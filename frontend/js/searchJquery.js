@@ -27,7 +27,8 @@ $(document).ready(function() {
     }
 
     // search for shop
-    $('#shopSearchBtn').click(async function() {
+    let test = 'shopSearchBtn';
+    $('#' + test).click(async function() {
         let isFirstFilter = true;  // record which one is the first filter
         let stores = []  // record filter result
         let statusCode = null;
@@ -86,10 +87,56 @@ $(document).ready(function() {
                 }
             });
         }
+
         // search price
+        let askLowPrice = $(".askLowPricePlace").val();
+        let askHighPrice = $(".askHighPricePlace").val();
+        // cannot pass null to the body
+        if (askLowPrice === "") askLowPrice = 0;
+        if (askHighPrice === "") askHighPrice = 999999999;
+        body = {
+            'price_lower_bound': askLowPrice,
+            'price_upper_bound': askHighPrice
+        }
+        await fetch(request_url + "/product/price_filer", {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(body)
+        })
+        .then(function(response) {
+            statusCode = response['status'];
+            return response.json();
+        })
+        .then(function(myJson) {
+            console.log(myJson);
+            if (statusCode === 200) {
+                stores = shopFilter(stores, myJson['valid_shops_name'], isFirstFilter);
+                isFirstFilter = false;
+            }
+        });
 
-
-        // search meal
+        // search meal name
+        let askMealName = $(".askMealPlace").val();
+        body = {
+            'ask_product_name': askMealName
+        }
+        if (askMealName != "") {
+            await fetch(request_url + "/product/name_filter", {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(body)
+            })
+            .then(function(response) {
+                statusCode = response['status'];
+                return response.json();
+            })
+            .then(function(myJson) {
+                if (statusCode === 200) {
+                    stores = shopFilter(stores, myJson['valid_shops_name'], isFirstFilter);
+                    isFirstFilter = false;
+                }
+            });
+        }
 
         // search category
         let askShopType = $(".askTypePlace").val();
@@ -118,7 +165,6 @@ $(document).ready(function() {
         $(".searchResult").find('tbody').empty();
 
         // Show searching result
-        console.log(stores);
         for (i in stores) {
             // get the information
             let storeName = stores[i];

@@ -138,19 +138,20 @@
             <div class="form-group">
               <label class="control-label col-sm-1" for="Price">Price</label>
               <div class="col-sm-2">
-                <input type="text" class="form-control">
+                <input type="text" class="form-control askLowPricePlace">
               </div>
               <label class="control-label col-sm-1" for="~">~</label>
               <div class="col-sm-2">
-                <input type="text" class="form-control">
+                <input type="text" class="form-control askHighPricePlace">
               </div>
 
               <label class="control-label col-sm-1" for="Meal">Meal</label>
               <div class="col-sm-5">
-                <input type="text" list="Meals" class="form-control" id="Meal" placeholder="Enter Meal">
+                <input type="text" list="Meals" class="form-control askMealPlace" id="Meal" placeholder="Enter Meal">
                 <datalist id="Meals">
                   <option value="Hamburger">
                   <option value="coffee">
+                  <option value="sushi">
                 </datalist>
               </div>
             </div>
@@ -313,17 +314,17 @@
 
             <div class="col-xs-6">
               <label for="ex3">meal name</label>
-              <input class="form-control" id="ex3" type="text">
+              <input class="form-control addMeal" id="ex3" type="text">
             </div>
           </div>
           <div class="row" style=" margin-top: 15px;">
             <div class="col-xs-3">
               <label for="ex7">price</label>
-              <input class="form-control" id="ex7" type="text">
+              <input class="form-control addPrice" id="ex7" type="text">
             </div>
             <div class="col-xs-3">
               <label for="ex4">quantity</label>
-              <input class="form-control" id="ex4" type="text">
+              <input class="form-control addQuantity" id="ex4" type="text">
             </div>
           </div>
 
@@ -332,12 +333,11 @@
 
             <div class=" col-xs-3">
               <label for="ex12">上傳圖片</label>
-              <input id="myFile" type="file" name="myFile" multiple class="file-loading">
-
+              <input id="myFile" type="file" name="myFile" multiple class="file-loading addImage" onchange="encodeImageFileAsURL(this)">
             </div>
-            <div class=" col-xs-3">
 
-              <button style=" margin-top: 15px;" type="button" class="btn btn-primary">Add</button>
+            <div class=" col-xs-3">
+              <button style=" margin-top: 15px;" type="button" class="btn btn-primary addProductBtn">Add</button>
             </div>
           </div>
         </div>
@@ -345,7 +345,7 @@
         <!-- Show shop's products -->
         <div class="row">
           <div class="  col-xs-8">
-            <table class="table" style=" margin-top: 15px;">
+            <table class="table shopProductResult" style=" margin-top: 15px;">
               <thead>
                 <tr>
                   <th scope="col">#</th>
@@ -359,6 +359,7 @@
                 </tr>
               </thead>
               <tbody>
+                <!-- product 1
                 <tr>
                   <th scope="row">1</th>
                   <td><img src="Picture/1.jpg" with="50" heigh="10" alt="Hamburger"></td>
@@ -366,13 +367,16 @@
                 
                   <td>80 </td>
                   <td>20 </td>
+                  
                   <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#Hamburger-1">
                   Edit
                   </button></td>
-                  <!-- Modal -->
+                  
                       <div class="modal fade" id="Hamburger-1" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                           <div class="modal-content">
+
+                            
                             <div class="modal-header">
                               <h5 class="modal-title" id="staticBackdropLabel">Hamburger Edit</h5>
                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -390,17 +394,18 @@
                                   <input class="form-control" id="ex41" type="text">
                                 </div>
                               </div>
-                    
                             </div>
+
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary" data-dismiss="modal">Edit</button>
-                             
                             </div>
                           </div>
                         </div>
                       </div>
+                  
                   <td><button type="button" class="btn btn-danger">Delete</button></td>
                 </tr>
+
                 <tr>
                   <th scope="row">2</th>
                   <td><img src="Picture/2.jpg" with="10" heigh="10" alt="coffee"></td>
@@ -411,7 +416,7 @@
                   <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#coffee-1">
                     Edit
                     </button></td>
-                    <!-- Modal -->
+                    
                         <div class="modal fade" id="coffee-1" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                           <div class="modal-dialog" role="document">
                             <div class="modal-content">
@@ -444,7 +449,7 @@
 
 
                   <td><button type="button" class="btn btn-danger">Delete</button></td>
-                </tr>
+                </tr> -->
 
               </tbody>
             </table>
