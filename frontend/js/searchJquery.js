@@ -112,6 +112,8 @@ $(document).ready(function() {
             if (statusCode === 200) {
                 stores = shopFilter(stores, myJson['valid_shops_name'], isFirstFilter);
                 isFirstFilter = false;
+            } else {
+                alert(myJson['message']);
             }
         });
 
