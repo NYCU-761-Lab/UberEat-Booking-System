@@ -95,6 +95,9 @@ class auth_login(Resource):
         password    = data['password']
 
         # 2-2. check account & password
+        if not account.isalnum() or not (0 < len(account) and len(account) <= 256):
+            return {'message': 'The account format is wrong.'}, 400
+            
         user = UserModel.query.filter_by(account = account).one_or_none()
         if not user:
             return {'message': 'This account has not registered yet.'}, 401
