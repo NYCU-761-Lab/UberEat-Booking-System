@@ -173,6 +173,34 @@
         </div>
         <div class="row">
           <div class="col-xs-8">
+
+            <div>
+              <div style="font-weight: bold; padding-bottom: 10px;">Sorted result by</div>
+              <div class="margin-left: 10px;">
+                <div class="form-horizontal">
+                  <div class="form-group">
+                    <label class="control-label col-sm-3">
+                      <select class="form-control" id="sortType">
+                        <option>None</option>
+                        <option>Shop Name</option>
+                        <option>Shop Category</option>
+                        <option>Shop Distance</option>
+                      </select>
+                    </label>
+                    <label class="control-label col-sm-3">
+                      <select class="form-control" id="sortMethod">
+                        <option>Ascend</option>
+                        <option>Descend</option>
+                      </select>
+                    </label>
+                    <label class="control-label col-sm-1">
+                      <button type="button" class="btn btn-primary" id="shopSortBtn">Sort</button>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <table class="table searchResult" style=" margin-top: 15px;">
               <thead>
                 <tr>

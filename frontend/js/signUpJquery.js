@@ -12,7 +12,7 @@ $(document).ready(function() {
             canSignUp = true;
         }
         else {
-            $("#repasswordText").html("Password is incorrect.");
+            $("#repasswordText").html("Password is not match.");
             $("#repasswordText").css("color", "red");
             passwordOK = false;
         }
@@ -98,6 +98,7 @@ $(document).ready(function() {
 
         if (passwordOK === false) {
             canSignUp = false;
+            alert("Password is not match.");
         }
         
         if (canSignUp) {
