@@ -204,7 +204,7 @@ $(document).ready(function() {
         let targetProduct = e.target.id.slice(8);
         $(".edit-modal-text").text("edit " + targetProduct);
 
-        $(".editBtn").click(async function() {
+        $(".editBtn").unbind().click(async function() {
             let editPrice = $(".edit-price").val();
             let editQuantity = $(".edit-quantity").val();
             let headers = {
