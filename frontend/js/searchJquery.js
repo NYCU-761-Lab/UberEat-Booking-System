@@ -27,7 +27,8 @@ $(document).ready(function() {
     }
 
     // search for shop
-    $('#shopSearchBtn').click(async function() {
+    let test = 'shopSearchBtn';
+    $('#' + test).click(async function() {
         let isFirstFilter = true;  // record which one is the first filter
         let stores = []  // record filter result
         let statusCode = null;
@@ -69,7 +70,7 @@ $(document).ready(function() {
         body = {
             'req_distance': askShopDist
         }
-        if (askShopDist != "") {
+        if (askShopDist != "no constraint") {
             await fetch(request_url + "/shop/distance_filter", {
                 method: 'POST',
                 headers: headers_new,
@@ -86,10 +87,56 @@ $(document).ready(function() {
                 }
             });
         }
+
         // search price
+        let askLowPrice = $(".askLowPricePlace").val();
+        let askHighPrice = $(".askHighPricePlace").val();
+        // cannot pass null to the body
+        if (askLowPrice === "") askLowPrice = 0;
+        if (askHighPrice === "") askHighPrice = 999999999;
+        body = {
+            'price_lower_bound': askLowPrice,
+            'price_upper_bound': askHighPrice
+        }
+        await fetch(request_url + "/product/price_filer", {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(body)
+        })
+        .then(function(response) {
+            statusCode = response['status'];
+            return response.json();
+        })
+        .then(function(myJson) {
+            console.log(myJson);
+            if (statusCode === 200) {
+                stores = shopFilter(stores, myJson['valid_shops_name'], isFirstFilter);
+                isFirstFilter = false;
+            }
+        });
 
-
-        // search meal
+        // search meal name
+        let askMealName = $(".askMealPlace").val();
+        body = {
+            'ask_product_name': askMealName
+        }
+        if (askMealName != "") {
+            await fetch(request_url + "/product/name_filter", {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(body)
+            })
+            .then(function(response) {
+                statusCode = response['status'];
+                return response.json();
+            })
+            .then(function(myJson) {
+                if (statusCode === 200) {
+                    stores = shopFilter(stores, myJson['valid_shops_name'], isFirstFilter);
+                    isFirstFilter = false;
+                }
+            });
+        }
 
         // search category
         let askShopType = $(".askTypePlace").val();
@@ -118,7 +165,6 @@ $(document).ready(function() {
         $(".searchResult").find('tbody').empty();
 
         // Show searching result
-        console.log(stores);
         for (i in stores) {
             // get the information
             let storeName = stores[i];
@@ -181,14 +227,82 @@ $(document).ready(function() {
                 .append($('<td>')
                     .append($('<button>')
                         .attr('type', 'button')
-                        .attr('class', 'btn btn-info')
+                        .attr('class', 'btn btn-info btn-open-menu')
+                        .attr('id', 'openBtn_' + storeName)
                         .attr('data-toggle', 'modal')
-                        .attr('data-target', targetString)
+                        .attr('data-target', '#all-modals')
                         .text('Open menu')
                     )
                 )
             );
+            // createModal(storeName);
+        }
+    });
+
+    // open the store menu
+    $(document).on('click', '.btn-open-menu', async function(e) {
+        // get the store's information
+        let targetStore = e.target.id.slice(8);
+        let headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
+        let body = {
+            'shop_name': targetStore
         }
 
+        let productList = await fetch(request_url + "/product/list", { 
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(body)
+        })
+        .then(function(response) {
+            statusCode = response['status'];
+            return response.json();
+        })
+        .then(function(myJson) {
+            if (statusCode === 200) {
+                return myJson['Product list of the shop'];
+            }
+        });
+
+        // add products to html DOM
+        $(".menuModals").find('tbody').empty();
+        for (i in productList) {
+            let productName = productList[i][0];
+            let productImg = productList[i][1];
+            let productPrice = productList[i][2];
+            let productQuantity = productList[i][3];
+
+            $(".menuModals").find('tbody')
+            .append($('<tr>')
+                .append($('<th>')
+                    .attr('scope', 'row')
+                    .text(Number(i) + 1)
+                )
+                .append($('<td>')
+                    .append($('<img>')
+                        .attr('src', productImg)
+                        .attr('width', "100")
+                        .attr('src', productImg)
+                        .attr('alt', productName)
+                    )
+                )
+                .append($('<td>')
+                    .text(productName)
+                )
+                .append($('<td>')
+                    .text(productPrice)
+                )
+                .append($('<td>')
+                    .text(productQuantity)
+                )
+                .append($('<td>')
+                    .append($('<input type="checkbox">'))
+                    .attr('id', 'cbox' + i)
+                    .attr('value', productName)
+                )
+            );
+        }
     });
 });

@@ -1,14 +1,20 @@
 $(document).ready(function() {
     let canSignUp = true;
+    let passwordOK = false;
 
     $(".passwordPlace").on("input", function() {
         let password = $("#password").val();
         let re_password = $("#re-password").val();
 
-        if (password === re_password) $("#repasswordText").html("");
+        if (password === re_password) {
+            $("#repasswordText").html("");
+            passwordOK = true;
+            canSignUp = true;
+        }
         else {
             $("#repasswordText").html("Password is incorrect.");
             $("#repasswordText").css("color", "red");
+            passwordOK = false;
         }
     });
 
@@ -90,9 +96,8 @@ $(document).ready(function() {
             canSignUp = false;
         }
 
-        // 檢查密碼驗證是否相符
-        if (password != re_password) {
-            canSignUp = false;   
+        if (passwordOK === false) {
+            canSignUp = false;
         }
         
         if (canSignUp) {
