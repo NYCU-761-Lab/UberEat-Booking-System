@@ -14,8 +14,7 @@ function encodeImageFileAsURL(element) {
 $(document).ready(function() {
     const accessToken = localStorage.getItem("tokenStorage");
     let request_url = "http://127.0.0.1:8080";
-    // Due to security, javascript will not show the full path of the image
-    let image_path = "/Users/angelahsi/Desktop/NYCU/大二下課程/資料庫/HW2/UberEat-Booking-System/backend/product_image/";
+    let globalStoreName = null;
 
     // every time we do some modify, refresh the list
     async function refreshProductList(shopName) {
@@ -79,89 +78,18 @@ $(document).ready(function() {
                 .append($('<td>')
                     .append($('<button>')
                         .attr('type', 'button')
-                        .attr('class', 'btn btn-info')
+                        .attr('class', 'btn btn-info btn-edit')
+                        .attr('id', 'editBtn_' + productName)
                         .attr('data-toggle', 'modal')
-                        .attr('data-target', '#' + productName)
+                        .attr('data-target', '#editModal')
                         .text('Edit')
                     )
                 )
-                // .append($('<div>')  // modal
-                //     .attr('class', 'modal fade')
-                //     .attr('id', productName)
-                //     .attr('data-backdrop', 'static')
-                //     .attr('tabindex', '-1')
-                //     .attr('role', 'dialog')
-                //     .attr('aria-labelledby' ,'staticBackdropLabel')
-                //     .attr('aria-hidden', 'true')
-                //     .append($('div')
-                //         .attr('class', 'modal-dialog')
-                //         .attr('role', 'document')
-                //         .append($('<div>')
-                //             .attr('class', 'modal-content')
-                //             .append($('<div>')
-                //                 .attr('class', 'modal-header')
-                //                 .append($('<h5>')
-                //                     .attr('class', 'modal-title')
-                //                     .attr('id', 'staticBackdropLabel')
-                //                     .text(productName + 'edit')
-                //                 )
-                //                 .append($('<button>')
-                //                     .attr('type', 'button')
-                //                     .attr('class', 'close')
-                //                     .attr('data-dismiss', 'modal')
-                //                     .attr('aria-label', 'Close')
-                //                     .append($('<span>')
-                //                         .attr('aria-hidden', 'true')
-                //                         .text('&times;')
-                //                     )
-                //                 )
-                //             )
-                //             .append($('<div>')
-                //                 .attr('class', 'modal-body')
-                //                 .append($('<div>')
-                //                     .attr('class', 'row')
-                //                     .append($('<div>')
-                //                         .attr('class', 'col-xs-6')
-                //                         .append($('<label>')
-                //                             .attr('for', 'ex72')
-                //                             .text('price')
-                //                         )
-                //                         .append($('<input>')
-                //                             .attr('class', 'form-control')
-                //                             .attr('id', 'ex72')
-                //                             .attr('type', 'text')
-                //                         )
-                //                     )
-                //                     .append($('<div>')
-                //                         .attr('class', 'col-xs-6')
-                //                         .append($('<label>')
-                //                             .attr('for', 'ex42')
-                //                             .text('quantity')
-                //                         )
-                //                         .append($('<input>')
-                //                             .attr('class', 'form-control')
-                //                             .attr('id', 'ex42')
-                //                             .attr('type', 'text')
-                //                         )
-                //                     )
-                //                 )
-                //             )
-                //             .append($('<div>')
-                //                 .attr('class', 'modal-footer')
-                //                 .append($('<button>')
-                //                     .attr('type', 'button')
-                //                     .attr('class', 'btn btn-secondary')
-                //                     .attr('data-dismiss', 'modal')
-                //                     .text('Edit')
-                //                 )
-                //             )
-                //         )
-                //     )
-                // )
                 .append($('<td>')
                     .append($('<button>')
                         .attr('type', 'button')
                         .attr('class', 'btn btn-danger')
+                        .attr('id', 'deleteBtn_' + productName)
                         .text('Delete')
                     )
                 )
@@ -196,6 +124,7 @@ $(document).ready(function() {
         // 使用者沒有商店的情況會有後端擋掉，記得判斷
         if (shopName != null) {
             // show current products
+            globalStoreName = shopName;
             refreshProductList(shopName);
         }
     });
@@ -268,8 +197,121 @@ $(document).ready(function() {
         // hasImage = false;  // refresh
     });
 
+
     // edit current product
+    $(document).on('click', '.btn-edit', async function(e) {
+        // get the store's information
+        let targetProduct = e.target.id.slice(8);
+        $(".edit-modal-text").text("edit " + targetProduct);
 
+        $(".editBtn").click(async function() {
+            let editPrice = $(".edit-price").val();
+            let editQuantity = $(".edit-quantity").val();
+            let headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer " + accessToken
+            }
 
+            if (editPrice === "" || editQuantity === "") {
+                alert("The field cannot be left blank.");
+            } else {
+                // edit price
+                let body = {
+                    'product_name': targetProduct,
+                    'edit_price': editPrice
+                }
+                await fetch(request_url + "/product/edit_price", { 
+                    method: 'PUT',
+                    headers: headers,
+                    body: JSON.stringify(body)
+                })
+                .then(function(response) {
+                    statusCode = response['status'];
+                    return response.json();
+                })
+                .then(function(myJson) {
+                    if (statusCode === 200) {
+                        alert(myJson['message']);
+                    } else {
+                        alert(myJson['message']);
+                    }
+                });
+
+                // edit quantity
+                body = {
+                    'product_name': targetProduct,
+                    'edit_quantity': editQuantity
+                }
+                await fetch(request_url + "/product/edit_quantity", { 
+                    method: 'PUT',
+                    headers: headers,
+                    body: JSON.stringify(body)
+                })
+                .then(function(response) {
+                    statusCode = response['status'];
+                    return response.json();
+                })
+                .then(function(myJson) {
+                    if (statusCode === 200) {
+                        alert(myJson['message']);
+                    } else {
+                        alert(myJson['message']);
+                    }
+                });
+            }
+            refreshProductList(globalStoreName);
+        });
+    });
+
+    
     // delete current product
+    $(document).on('click', '.btn-danger', async function(e) { 
+        let statusCode = null;
+        // Get shop's name
+        let headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": "Bearer " + accessToken
+        }
+        let shopName = await fetch(request_url + "/shop/get_shop_name_of_user", {
+            method: 'POST',
+            headers: headers
+        })
+        .then(function(response) {
+            statusCode = response['status'];
+            return response.json();
+        })
+        .then(function(myJson) {
+            if (statusCode === 200) {
+                return myJson['shop_name of the user'];
+            }
+        });
+
+        // delete the product
+        let productDelete = e.target.id.slice(10);
+        let body = {
+            'product_name': productDelete
+        }
+
+        fetch(request_url + "/product/delete", {
+            method: 'DELETE',
+            headers: headers,
+            body: JSON.stringify(body)
+        })
+        .then(function(response) {
+            console.log(response);
+            statusCode = response['status'];
+            return response.json();
+        })
+        .then(function(myJson) {
+            console.log(myJson);
+            if (statusCode === 200) {
+                alert(myJson['message']);
+                refreshProductList(shopName);
+            } else {
+                alert(myJson['message']);
+            }
+        });
+    });
 });

@@ -125,6 +125,7 @@
               <label class="control-label col-sm-1" for="distance">distance</label>
               <div class="col-sm-5">
                 <select class="form-control" id="sel1">
+                  <option>no constraint</option>
                   <option>near</option>
                   <option>moderate</option>
                   <option>far</option>
@@ -174,7 +175,7 @@
           </form>
         </div>
         <div class="row">
-          <div class="  col-xs-8">
+          <div class="col-xs-8">
             <table class="table searchResult" style=" margin-top: 15px;">
               <thead>
                 <tr>
@@ -201,76 +202,61 @@
             </table>
 
                 <!-- Modal -->
-  <div class="modal fade" id="macdonald"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">menu</h4>
-        </div>
-        <div class="modal-body">
-         <!--  -->
-  
-         <div class="row">
-          <div class="  col-xs-12">
-            <table class="table" style=" margin-top: 15px;">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Picture</th>
-                 
-                  <th scope="col">meal name</th>
-               
-                  <th scope="col">price</th>
-                  <th scope="col">Quantity</th>
-                
-                  <th scope="col">Order check</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td><img src="Picture/1.jpg" with="50" heigh="10" alt="Hamburger"></td>
-                
-                  <td>Hamburger</td>
-                
-                  <td>80 </td>
-                  <td>20 </td>
-              
-                  <td> <input type="checkbox" id="cbox1" value="Hamburger"></td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td><img src="Picture/2.jpg" with="10" heigh="10" alt="coffee"></td>
-                 
-                  <td>coffee</td>
-             
-                  <td>50 </td>
-                  <td>20</td>
-              
-                  <td><input type="checkbox" id="cbox2" value="coffee"></td>
-                </tr>
+            <div>
+              <div class="modal fade" id="all-modals"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <h4 class="modal-title">menu</h4>
+                    </div>
+                    <div class="modal-body">   
+                     <div class="row">
+                      <div class="  col-xs-12">
+                        <table class="table menuModals" style=" margin-top: 15px;">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Picture</th>
+                              <th scope="col">meal name</th>
+                              <th scope="col">price</th>
+                              <th scope="col">Quantity</th>
+                              <th scope="col">Order check</th>
+                            </tr>
+                          </thead>
 
-              </tbody>
-            </table>
+                          <tbody>
+                            <tr>
+                              <th scope="row">1</th>
+                              <td><img src="Picture/1.jpg" with="50" heigh="10" alt="Hamburger"></td>
+                              <td>Hamburger</td>
+                              <td>80 </td>
+                              <td>20 </td>
+                              <td> <input type="checkbox" id="cbox1" value="Hamburger"></td>
+                            </tr>
+
+                            <tr>
+                              <th scope="row">2</th>
+                              <td><img src="Picture/2.jpg" with="10" heigh="10" alt="coffee"></td>
+                              <td>coffee</td>
+                              <td>50 </td>
+                              <td>20</td>
+                              <td><input type="checkbox" id="cbox2" value="coffee"></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Order</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-
-        </div>
-        
-
-         <!--  -->
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Order</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-          </div>
-
         </div>
       </div>
       <!-- Shop Page -->
@@ -359,8 +345,8 @@
                 </tr>
               </thead>
               <tbody>
-                <!-- product 1
-                <tr>
+                product 1
+                <!-- <tr>
                   <th scope="row">1</th>
                   <td><img src="Picture/1.jpg" with="50" heigh="10" alt="Hamburger"></td>
                   <td>Hamburger</td>
@@ -370,43 +356,14 @@
                   
                   <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#Hamburger-1">
                   Edit
-                  </button></td>
+                  </button></td> -->
                   
-                      <div class="modal fade" id="Hamburger-1" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-
-                            
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="staticBackdropLabel">Hamburger Edit</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
-                            </div>
-                            <div class="modal-body">
-                              <div class="row" >
-                                <div class="col-xs-6">
-                                  <label for="ex71">price</label>
-                                  <input class="form-control" id="ex71" type="text">
-                                </div>
-                                <div class="col-xs-6">
-                                  <label for="ex41">quantity</label>
-                                  <input class="form-control" id="ex41" type="text">
-                                </div>
-                              </div>
-                            </div>
-
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Edit</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                   
-                  <td><button type="button" class="btn btn-danger">Delete</button></td>
-                </tr>
+                  
+                  <!-- <td><button type="button" class="btn btn-danger">Delete</button></td>
+                </tr> -->
 
-                <tr>
+                <!-- <tr>
                   <th scope="row">2</th>
                   <td><img src="Picture/2.jpg" with="10" heigh="10" alt="coffee"></td>
                   <td>coffee</td>
@@ -452,6 +409,37 @@
                 </tr> -->
 
               </tbody>
+              <!-- Modals -->
+              <div class="modal fade" id="editModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+
+                    
+                    <div class="modal-header">
+                      <h5 class="modal-title edit-modal-text" id="staticBackdropLabel">Hamburger Edit</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row" >
+                        <div class="col-xs-6">
+                          <label for="ex71">price</label>
+                          <input class="form-control edit-price" id="ex71" type="text">
+                        </div>
+                        <div class="col-xs-6">
+                          <label for="ex41">quantity</label>
+                          <input class="form-control edit-quantity" id="ex41" type="text">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary editBtn" data-dismiss="modal">Edit</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </table>
           </div>
 
