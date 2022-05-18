@@ -188,6 +188,10 @@ $(document).ready(function() {
                 if (statusCode === 200) {
                     alert(myJson['message']);
                     refreshProductList(shopName);
+                    $(".addMeal").val("");
+                    $(".addPrice").val("");
+                    $(".addQuantity").val("");
+                    $(".addImage").val("");
                 } else {
                     alert(myJson['message']);
                 }
