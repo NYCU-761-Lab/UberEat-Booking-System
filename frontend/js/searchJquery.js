@@ -209,13 +209,19 @@ $(document).ready(function() {
 
         // search distance
         let askShopDist = $("#sel1").val();
+        let askShopDistNew = null;
         let headers_new = {
             "Content-Type": "application/json",
             "Accept": "application/json",
             "Authorization": "Bearer " + accessToken
         }
+
+        if (askShopDist[0] === "n") askShopDistNew = "near";
+        if (askShopDist[0] === "m") askShopDistNew = "moderate";
+        if (askShopDist[0] === "f") askShopDistNew = "far";
+
         body = {
-            'req_distance': askShopDist
+            'req_distance': askShopDistNew
         }
         if (askShopDist != "no constraint") {
             await fetch(request_url + "/shop/distance_filter", {
