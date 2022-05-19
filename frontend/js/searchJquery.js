@@ -246,8 +246,8 @@ $(document).ready(function() {
         let askLowPrice = $(".askLowPricePlace").val();
         let askHighPrice = $(".askHighPricePlace").val();
         // cannot pass null to the body
-        if (askLowPrice === "") askLowPrice = 0;
-        if (askHighPrice === "") askHighPrice = 999999999;
+        if (askLowPrice === "") askLowPrice = "null";
+        if (askHighPrice === "") askHighPrice = "null";
         body = {
             'price_lower_bound': askLowPrice,
             'price_upper_bound': askHighPrice
