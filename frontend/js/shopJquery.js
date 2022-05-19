@@ -143,7 +143,7 @@ $(document).ready(function() {
         let shopName = $('.registerShopName').val();
         let shopCategory = $('.registerShopCategory').val();
         let shopLatitude = $('.registerShopLatitude').val();
-        let shopLongitude = $('.registerShopLatitude').val();
+        let shopLongitude = $('.registerShopLongitude').val();
 
         if (shopName === "" || shopCategory === "" || shopLatitude === "" || shopLongitude === "") {
             alert("The field cannot be left blank.");
