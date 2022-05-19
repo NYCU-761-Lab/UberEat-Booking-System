@@ -55,12 +55,17 @@ class product_register(Resource):
         elif ProductModel.query.filter_by( product_name = product_name, belong_shop_name = shop.shop_name ).one_or_none():
             return {'message': 'The product name has already been registered in the shop.'}, 409
 
+        # try:
+        #     base64.urlsafe_b64decode(pure_picture_base64)
+        # except:
+        #     {'message': 'The picture is not valid.'}, 400
+
         # 2-3. if pass the test than save to db
         # can save type: jpg(jpeg), png, bmp (svg will fail)
         img_type = picture_base64[ picture_base64.find("/")+1 : picture_base64.find(";") ]
         pure_picture_base64 = picture_base64[ picture_base64.find(",")+1 :]  # delete header
-        img_inside_url = "/Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/product_image/" + user_account + "_" + product_name + "." + img_type
-        # img_inside_url = "/Users/angelahsi/Desktop/NYCU/大二下課程/資料庫/HW2/UberEat-Booking-System/backend/product_image/" + user_account + "_" + product_name + "." + img_type
+        # img_inside_url = "/Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/product_image2/" + user_account + "_" + product_name + "." + img_type
+        img_inside_url = "/Users/angelahsi/Desktop/NYCU/大二下課程/資料庫/HW2/UberEat-Booking-System/backend/product_image/" + user_account + "_" + product_name + "." + img_type
         with open(img_inside_url, "wb") as fh:
             fh.write(base64.urlsafe_b64decode(pure_picture_base64))
 
@@ -210,14 +215,19 @@ class product_price_filter(Resource):
         """
             1. 如果 lower_bound 為空
             2. 如果 upper_bound 為空
-            3. 都不為空
+            3. 都為空
+            4. 都不為空
 
             收進來 string 要先判斷是否為 unsigned int type - isdigit()
         """
         valid_shop_name = []
         all_product = ProductModel.query.all()
         for product in all_product:
-            if price_lower_bound == "null":
+            if price_upper_bound == "null" and price_lower_bound == "null":  # both side no constraint
+                if (product.belong_shop_name not in valid_shop_name):
+                        valid_shop_name.append(product.belong_shop_name)
+
+            elif price_lower_bound == "null":
                 if (product.price <= ast.literal_eval(price_upper_bound)):
                     if (product.belong_shop_name not in valid_shop_name):
                         valid_shop_name.append(product.belong_shop_name)
@@ -226,7 +236,7 @@ class product_price_filter(Resource):
                 if (ast.literal_eval(price_lower_bound) <= product.price):
                     if (product.belong_shop_name not in valid_shop_name):
                         valid_shop_name.append(product.belong_shop_name)
-    
+
             else:  
                 if (ast.literal_eval(price_lower_bound) <= product.price and product.price <= ast.literal_eval(price_upper_bound)):
                     if (product.belong_shop_name not in valid_shop_name):
