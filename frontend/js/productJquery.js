@@ -158,7 +158,7 @@ $(document).ready(function() {
         });
 
         // add the product
-        if (addMeal === "" || addPrice === "" || addQuantity === "") {
+        if (addMeal === "" || addPrice === "" || addQuantity === "" || addImage === null) {
             alert("The field cannot be left blank.");
         } else {
             let headers = {
