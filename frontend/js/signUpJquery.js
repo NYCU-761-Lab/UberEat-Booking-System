@@ -9,7 +9,7 @@ $(document).ready(function() {
         if (password === re_password) {
             $("#repasswordText").html("");
             passwordOK = true;
-            canSignUp = true;
+            // canSignUp = true;
         }
         else {
             $("#repasswordText").html("Password is not match.");
@@ -89,11 +89,14 @@ $(document).ready(function() {
         let longitude = $("#longitude").val();
 
         let request_url = "http://127.0.0.1:8080";
+        canSignUp = true;
 
         // 檢查欄位是否空白
         if (name === "" || phone_number === "" || account === "" || password === "" || re_password === "" || latitude === "" || longitude === "") {
             alert("The fields cannot be blank.");
             canSignUp = false;
+        } else {
+            canSignUp = true;
         }
 
         if (passwordOK === false) {
