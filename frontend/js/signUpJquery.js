@@ -2,6 +2,19 @@ $(document).ready(function() {
     let canSignUp = true;
     let passwordOK = false;
 
+    $(".passwordPlaceOld").on("input", function() {
+        let password = $("#password").val();
+        let re_password = $("#re-password").val();
+
+        if (password === re_password) {
+            passwordOK = true;
+            canSignUp = true;
+        }
+        else {
+            passwordOK = false;
+        }
+    });
+    
     $(".passwordPlace").on("input", function() {
         let password = $("#password").val();
         let re_password = $("#re-password").val();
