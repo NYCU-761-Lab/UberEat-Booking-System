@@ -192,12 +192,13 @@ $(document).ready(function() {
                     $(".addPrice").val("");
                     $(".addQuantity").val("");
                     $(".addImage").val("");
+                    encodeImage = null
                 } else {
                     alert(myJson['message']);
                 }
             });
         }
-        encodeImage = null;  // refresh
+        // encodeImage = null;  // refresh
         // hasImage = false;  // refresh
     });
 
