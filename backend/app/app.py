@@ -21,8 +21,8 @@ CORS(app)
 # engine = create_engine('postgresql://scott:tiger@localhost:8080/mydatabase')
 # basedir= os.path.abspath(os.path.dirname(__file__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.path.join(basedir,'data.sqlite')
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/database2.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/angelahsi/Desktop/NYCU/大二下課程/資料庫/HW2/UberEat-Booking-System/backend/database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/database2.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/angelahsi/Desktop/NYCU/大二下課程/資料庫/HW2/UberEat-Booking-System/backend/database.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -45,6 +45,7 @@ def create_tables():
     from models.user import UserModel
     from models.shop import ShopModel
     from models.product import ProductModel
+    from models.transaction import TransactionModel
     db.init_app(app)
     db.create_all()
 
