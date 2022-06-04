@@ -7,7 +7,7 @@ class TransactionModel(db.Model):
     transaction_id = db.Column(db.String(256), nullable = False, primary_key = True, unique = True) # need to be unique
     type = db.Column(db.String(256), nullable = False)
     amount_of_money = db.Column(db.Float(), nullable = False)
-    time = db.Column(db.DateTime, nullable = False)
+    time = db.Column(db.String(256), nullable = False)
     
     # 訂單擁有人
     owner = db.Column(db.String(256), db.ForeignKey('user.account'), nullable = False)
