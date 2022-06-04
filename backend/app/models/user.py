@@ -17,6 +17,7 @@ class UserModel(db.Model):
     latitude = db.Column(db.Float(256), nullable = False)
     longitude = db.Column(db.Float(256), nullable = False)
     role = db.Column(db.String(10), nullable = False)
+    balance = db.Column(db.Float(), nullable = False)  # actually will be integer
 
 
     # foreign key part, later, wail until we have other models
@@ -35,6 +36,7 @@ class UserModel(db.Model):
         self.latitude = latitude
         self.longitude = longitude
         self.role = role
+        self.balance = 0    # initial set to 0
 
     def save_to_db(self):
         db.session.add(self)

@@ -140,13 +140,16 @@ class auth_account_information(Resource):
         latitude = account_information.latitude
         longitude = account_information.longitude
         role = account_information.role
+        balance = account_information.balance
         
         return {'account': identity,
                 'username': username, 
                 'phone_number': phone_number, 
                 'latitude': latitude, 
                 'longitude': longitude, 
-                'role': role}, 200
+                'role': role,
+                'balance': balance
+                }, 200
 
 
 class auth_edit_location(Resource):
