@@ -230,7 +230,7 @@ class auth_recharge(Resource):
         
         nowtime = datetime.datetime.now()
         transaction_time = nowtime.strftime("%Y-%m-%d %H:%M:%S")  # return type is string
-        transaction = TransactionModel(transaction_id, "Recharge", value, transaction_time, user.username, user.username)
+        transaction = TransactionModel(transaction_id, "recharge", value, transaction_time, user.account, user.account)
         transaction.save_to_db()
 
         return {'message': 'Successfully Recharged! Happy shopping!!'}, 200
