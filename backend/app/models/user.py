@@ -61,3 +61,9 @@ class UserModel(db.Model):
         query = cls.query.filter_by(account=account).first()
         query.role = 'manager'
         db.session.commit()
+
+    @classmethod
+    def recharge_balance(cls, account, value):
+        query = cls.query.filter_by(account=account).first()
+        query.balance += value
+        db.session.commit()
