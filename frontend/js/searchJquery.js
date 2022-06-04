@@ -383,11 +383,31 @@ $(document).ready(function() {
                     .text(productQuantity)
                 )
                 .append($('<td>')
-                    .append($('<input type="checkbox">'))
-                    .attr('id', 'cbox' + i)
-                    .attr('value', productName)
+                    // .append($('<input type="checkbox">'))
+                    // .attr('id', 'cbox' + i)
+                    // .attr('value', productName)
+                    .append($('<button>')
+                        .attr('type', 'button')
+                        .attr('class', 'btn btn-light btn-minus')
+                        .attr('id', 'minusBtn_' + productName)
+                        .attr('style', 'margin-right: 5px;')
+                        .text('-')
+                    )
+                    .append($('<span>')
+                        .attr('id', 'orderCnt_' + productName)
+                        .text(0)
+                    )
+                    .append($('<button>')
+                        .attr('type', 'button')
+                        .attr('class', 'btn btn-light btn-add')
+                        .attr('id', 'addBtn_' + productName)
+                        .attr('style', 'margin-left: 5px;')
+                        .text('+')
+                    )
                 )
             );
+
+            $(".btn-calculatePrice").attr('id', 'btn-calculatePrice_' + targetStore);
         }
     });
 });

@@ -31,9 +31,10 @@
     <ul class="nav nav-tabs">
       <li class="active"><a href="#home">Home</a></li>
       <li id="shopItem"><a href="#menu1">Shop</a></li>
+      <li><a href="#menuMyOrder">My Order</a></li>
+      <li><a href="#menuShopOrder">Shop Order</a></li>
+      <li><a href="#menuRecord">Transaction Record</a></li>
       <li><a href="#menu2">Log Out</a></li>
-
-
     </ul>
 
     <div class="tab-content">
@@ -63,7 +64,7 @@
               Wallet Balance:
               <span id="accountBalance"></span>
               <button type="button " style="margin-left: 5px;" class=" btn btn-info " data-toggle="modal"
-              data-target="#myModal">Add value</button>
+              data-target="#myModal">Recharge</button>
             </div>
             
             <!-- Location Modal -->
@@ -93,13 +94,13 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Add value</h4>
+                    <h4 class="modal-title">Recharge</h4>
                   </div>
                   <div class="modal-body">
-                    <input type="text" class="form-control" id="Meal" placeholder="enter add value">
+                    <input type="text" class="form-control walletVal" id="Meal" placeholder="enter add value">
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Add</button>
+                    <button type="button" class="btn btn-default btn-wallet" data-dismiss="modal">Add</button>
                   </div>
                 </div>
               </div>
@@ -225,22 +226,19 @@
               -->
               </tbody>
             </table>
-            <!-- <div id="testPage">test</div>
-            <ul id="pagination-demo" class="pagination-sm"></ul>
-            <div id="page-content" class="page-content"> Page 1</div>   -->
 
-                <!-- Modal -->
+            <!-- Modal -->
             <div>
               <div class="modal fade" id="all-modals"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <button type="button" class="close btn-close" data-dismiss="modal">&times;</button>
                       <h4 class="modal-title">menu</h4>
                     </div>
                     <div class="modal-body">   
                      <div class="row">
-                      <div class="  col-xs-12">
+                      <div class="col-xs-12">
                         <table class="table menuModals" style=" margin-top: 15px;">
                           <thead>
                             <tr>
@@ -249,7 +247,7 @@
                               <th scope="col">meal name</th>
                               <th scope="col">price</th>
                               <th scope="col">Quantity</th>
-                              <th scope="col">Order check</th>
+                              <th scope="col">Order</th>
                             </tr>
                           </thead>
 
@@ -262,31 +260,40 @@
                               <td>20 </td>
                               <td> <input type="checkbox" id="cbox1" value="Hamburger"></td>
                             </tr>
-
-                            <tr>
-                              <th scope="row">2</th>
-                              <td><img src="Picture/2.jpg" with="10" heigh="10" alt="coffee"></td>
-                              <td>coffee</td>
-                              <td>50 </td>
-                              <td>20</td>
-                              <td><input type="checkbox" id="cbox2" value="coffee"></td>
-                            </tr>
                           </tbody>
                         </table>
                       </div>
                     </div>
                   
+                    <div>
+                      <h5>Type</h5>
+                      <div style="width: 30%;">
+                        <select class="form-control" id="deliveryType">
+                          <option>Delivery</option>
+                          <option>Pick-up</option>
+                        </select>
+                      </div>
+                    </div>
+                    
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Order</button>
+                      <!-- <button type="button" class="btn btn-default btn-calculatePrice" data-toggle="modal" data-target="#calculateModal">Calculate the price</button> -->
+                      <button class="btn btn-default btn-calculatePrice" data-target="#calculateModal" data-toggle="modal" data-dismiss="modal">Calculate the price</button>
                     </div>
                   </div>
                 </div>
               </div>
+
+              
+
             </div>
+
+
           </div>
         </div>
       </div>
+
+
       <!-- Shop Page -->
       <div id="menu1" class="tab-pane fade">
 
@@ -312,7 +319,6 @@
             </div>
           </div>
         </div>
-
 
 
         <div class=" row" style=" margin-top: 25px;">
@@ -373,68 +379,6 @@
                 </tr>
               </thead>
               <tbody>
-                
-                <!-- <tr>
-                  <th scope="row">1</th>
-                  <td><img src="Picture/1.jpg" with="50" heigh="10" alt="Hamburger"></td>
-                  <td>Hamburger</td>
-                
-                  <td>80 </td>
-                  <td>20 </td>
-                  
-                  <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#Hamburger-1">
-                  Edit
-                  </button></td> -->
-                  
-                  
-                  
-                  <!-- <td><button type="button" class="btn btn-danger">Delete</button></td>
-                </tr> -->
-
-                <!-- <tr>
-                  <th scope="row">2</th>
-                  <td><img src="Picture/2.jpg" with="10" heigh="10" alt="coffee"></td>
-                  <td>coffee</td>
-               
-                  <td>50 </td>
-                  <td>20</td>
-                  <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#coffee-1">
-                    Edit
-                    </button></td>
-                    
-                        <div class="modal fade" id="coffee-1" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                          <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5 class="modal-title" id="staticBackdropLabel">coffee Edit</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                <div class="row" >
-                                  <div class="col-xs-6">
-                                    <label for="ex72">price</label>
-                                    <input class="form-control" id="ex72" type="text">
-                                  </div>
-                                  <div class="col-xs-6">
-                                    <label for="ex42">quantity</label>
-                                    <input class="form-control" id="ex42" type="text">
-                                  </div>
-                                </div>
-                      
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Edit</button>
-                               
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-
-                  <td><button type="button" class="btn btn-danger">Delete</button></td>
-                </tr> -->
 
               </tbody>
               <!-- Modals -->
@@ -472,20 +416,71 @@
           </div>
 
         </div>
+      </div>
 
+      <!-- My Order Page -->
+      <div id="menuMyOrder" class="tab-pane fade">
+        <p>my order</p>
+      </div>
 
+      <!-- Shop Order Page -->
+      <div id="menuShopOrder" class="tab-pane fade">
+        <p>shop order</p>
+      </div>
+
+      <!-- Transaction Record Page -->
+      <div id="menuRecord" class="tab-pane fade">
+        <p>transaction record</p>
       </div>
 
       <!-- Log Out Page -->
       <div id="menu2" class="tab-pane fade">
-
         <h3> Are you sure to log out? </h3>
         <button type="submit" style="margin-top: 18px;" class="btn btn-primary logOutBtn">Log Out!</button>
       </div>
 
-
-
     </div>
+
+    <!-- Modals will show after clicking "Calculate the price" button -->
+    <div class="modal fade" id="calculateModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="calculateModal" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title edit-modal-text" id="staticBackdropLabel">Order</h5>
+            <button type="button" class="close btn-close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="  col-xs-12">
+                <table class="table" style=" margin-top: 15px;">
+                  <thead>
+                    <tr>
+                      <th scope="col">Picture</th>
+                      <th scope="col">meal name</th>
+                      <th scope="col">price</th>
+                      <th scope="col">Order Quantity</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- order things -->
+                  </tbody>
+                </table>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <div>
+              <span>Subtotal <span id="subtotalPrice">0</span></span><br/>
+              <span>Delivery fee <span id="deliveryPrice">0</span></span><br/>
+              <span>Total Price <span id="totalPrice">0</span></span>
+            </div>
+            <button type="button" class="btn btn-secondary btn-order" data-dismiss="modal">Order</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Option 1: Bootstrap Bundle with Popper -->
@@ -507,6 +502,7 @@
   <script src="js/shopJquery.js"></script>
   <script src="js/searchJquery.js"></script>
   <script src="js/productJquery.js"></script>
+  <script src="js/homeOrder.js"></script>
 
   <script src = "https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.1/jquery.twbsPagination.min.js"> </script>  
 </body>

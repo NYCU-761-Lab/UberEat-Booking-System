@@ -1,0 +1,242 @@
+$(document).ready(function() {
+    const accessToken = localStorage.getItem("tokenStorage");
+    let request_url = "http://127.0.0.1:8080";
+    // global variables
+    let shopName = null;
+    let deliverType = null;
+    let orderedProducts = [];
+    // console.log(accessToken);
+
+
+    // edit the ordered products in the menu
+    $(document).on('click', '.btn-add', async function(e) {  // add one product in menu
+        let productName = e.target.id.slice(7);
+        let currentCnt = $('#orderCnt_' + productName).val();
+        $('#orderCnt_' + productName).val(Number(currentCnt) + 1);
+        $('#orderCnt_' + productName).html(Number(currentCnt) + 1);
+    });
+    $(document).on('click', '.btn-minus', async function(e) {  // minus one product in menu
+        let productName = e.target.id.slice(9);
+        let currentCnt = $('#orderCnt_' + productName).val();
+        $('#orderCnt_' + productName).val(Number(currentCnt) - 1);
+        $('#orderCnt_' + productName).html(Number(currentCnt) - 1);
+    });
+
+
+    // click the "calculate Price" button
+    $('.btn-calculatePrice').click(async function(e) {
+        let subTotal = 0;
+        let deliveryFee = 0;
+        let totalPrice = 0;
+
+        // get the order detail (shop name, deliver type, products...)
+        shopName = e.target.id.slice(19);
+        deliverType = $('#deliveryType').val();
+        // get the products sold by the store
+        let statusCode = null;
+        let headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": "Bearer " + accessToken
+        }
+        let body = {
+            'shop_name': shopName
+        }
+        let productList = await fetch(request_url + "/product/list", {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(body)
+        })
+        .then(function(response) {
+            statusCode = response['status'];
+            return response.json();
+        })
+        .then(function(myJson) {
+            if (statusCode === 200) {
+                return myJson['Product list of the shop'];
+            }
+        });
+        // get the products in the order & calculate subTotal
+        for (i in productList) {
+            let productName = productList[i][0];
+            let productPrice = productList[i][2];
+            let productCnt = $('#orderCnt_' + productName).val();
+            // if (productCnt < 0) {
+            //     alert("The order quality of the product is not positive integer.");
+            // } else if (productCnt > 0) {
+            //     orderedProducts.push({
+            //         name:    productName,
+            //         count:  productCnt,
+            //         picture: productList[i][1],
+            //         price: productPrice
+            //     });
+            //     subTotal  = subTotal + productCnt * productPrice;
+            // }
+            if (productCnt != 0) {  // 不論正負都會送POST
+                orderedProducts.push({
+                    name:    productName,
+                    count:  productCnt,
+                    picture: productList[i][1],
+                    price: productPrice
+                });
+                subTotal  = subTotal + productCnt * productPrice;
+            }
+        } 
+
+
+        // calculate delivery fee
+        if (deliverType === "Delivery") {
+            body = {
+                'shop_name': shopName
+            }
+            let distanceToShop = await fetch(request_url + "/shop/get_shop_distance", {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(body)
+            })
+            .then(function(response) {
+                statusCode = response['status'];
+                return response.json();
+            })
+            .then(function(myJson) {
+                if (statusCode === 200) {
+                    return myJson['Distance to the shop (km)'];
+                }
+            });
+            deliveryFee = distanceToShop * 10;
+            if (deliveryFee < 10) deliveryFee = 10;
+            deliveryFee = Math.round(deliveryFee);  // 四捨五入
+
+        } else if (deliverType === "Pick-up") {
+            deliveryFee = 0;
+        }
+
+
+        // calculate all prices
+        totalPrice = subTotal + deliveryFee;
+        $('#subtotalPrice').val(Number(subTotal));
+        $('#subtotalPrice').html(Number(subTotal));
+        $('#deliveryPrice').val(Number(deliveryFee));
+        $('#deliveryPrice').html(Number(deliveryFee));
+        $('#totalPrice').val(Number(totalPrice));
+        $('#totalPrice').html(Number(totalPrice));
+
+
+        // show the ordered products on the "calculated modal"
+        $("#calculateModal").find('tbody').empty();
+        for (i in orderedProducts) {
+            // console.log(orderedProducts);
+            $("#calculateModal").find('tbody')
+            .append($('<tr>')
+                .append($('<td>')
+                    .append($('<img>')
+                        .attr('src', orderedProducts[i].picture)
+                        .attr('width', "100")
+                        .attr('alt', orderedProducts[i].name)
+                    )
+                )
+                .append($('<td>')
+                    .text(orderedProducts[i].name)
+                )
+                .append($('<td>')
+                    .text(orderedProducts[i].price)
+                )
+                .append($('<td>')
+                    .text(orderedProducts[i].count)
+                )
+                .attr('class', 'orderedItems')
+            );
+        }
+    });
+
+
+    // click the Order button
+    $('.btn-order').click(async function(e) {
+        $("#calculateModal").find('tbody').empty();
+        // console.log(shopName);
+        // console.log(orderedProducts);
+
+        // get order details to use API
+        let deliverType = $('#deliveryType').val();
+        let orderDetails = [];
+        for (i in orderedProducts) {
+            orderDetails.push([orderedProducts[i].name, orderedProducts[i].count]);
+        }
+
+        let statusCode = null;
+        let headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": "Bearer " + accessToken
+        }
+        let body = {
+            'order_shop_name': shopName,
+            'order_details': orderDetails,
+            'delivery_type': deliverType
+        }
+        fetch(request_url + "/order/make", {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(body)
+        })
+        .then(function(response) {
+            statusCode = response['status'];
+            return response.json();
+        })
+        .then(function(myJson) {
+            if (statusCode === 200) {
+                alert(myJson['message']);
+                location.reload();  // refresh the page
+            } else {
+                alert(myJson['message']);
+            }
+        });
+        orderedProducts = [];     
+    });
+
+
+    // click th close button
+    $('.btn-close').click(function() {
+        orderedProducts = [];
+    });
+
+
+    // recharge the wallet
+    $('.btn-wallet').click(async function() {
+        let originalVal = Number($('#accountBalance').val());
+        let addValue = Number($('.walletVal').val());
+
+        // $("#accountBalance").html(originalVal + addValue);
+        // $("#accountBalance").val(originalVal + addValue);
+        // $(".walletVal").val("");
+        let statusCode = null;
+        let headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": "Bearer " + accessToken
+        }
+        let body = {
+            'value': addValue
+        }
+        fetch(request_url + "/auth/recharge", {
+            method: 'PUT',
+            headers: headers,
+            body: JSON.stringify(body)
+        })
+        .then(function(response) {
+            statusCode = response['status'];
+            return response.json();
+        })
+        .then(function(myJson) {
+            if (statusCode === 200) {
+                $("#accountBalance").html(originalVal + addValue);
+                $("#accountBalance").val(originalVal + addValue);
+                alert(myJson['message']);
+            } else {
+                alert(myJson['message']);
+            }
+            $(".walletVal").val("");
+        });
+        location.reload();  // refresh the page
+    });
+});
