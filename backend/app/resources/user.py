@@ -187,3 +187,34 @@ class auth_edit_location(Resource):
         longitude = ast.literal_eval(longitude)
         UserModel.edit_location(identity, latitude, longitude)
         return {'message': 'The locaton has been edited successfully.'}, 200
+
+# 儲值功能
+class auth_recharge(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('value', type = str, required = True, 
+                        help = 'This field cannot be left blank.')
+    
+    @jwt_required(optional = True)
+    def put(self):
+        # check account
+        identity = get_jwt_identity()
+        user = UserModel.query.filter_by(account = identity).one_or_none()
+        if not user:
+            return {'message': 'This user does not exist.'}, 401
+        
+        # check value
+        data = auth_recharge.parser.parse_args()
+        value    = data['value']
+
+        # isdigit -> 只能有數字，不可以有負號、小數點
+        if not value.isdigit():
+            return {'message': 'The value type is not positive integer.'}, 400
+        
+        # 也不能是 0 or 0 開頭
+        elif value[0] == '0':
+            return {'message': 'The value type is not positive integer.'}, 400
+        
+        # edit db
+        value = ast.literal_eval(value)
+        UserModel.recharge_balance(identity, value)
+        return {'message': 'Successfully Recharged! Happy shopping!!'}, 200
