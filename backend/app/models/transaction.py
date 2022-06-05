@@ -9,7 +9,7 @@ class TransactionModel(db.Model):
     amount_of_money = db.Column(db.Float(), nullable = False)
     time = db.Column(db.String(256), nullable = False)
     
-    # 訂單擁有人
+    # 交易紀錄擁有人
     owner = db.Column(db.String(256), db.ForeignKey('user.account'), nullable = False)
     # 交易對象
     trader = db.Column(db.String(256), nullable = False) # 應該不用設成 foreign key, 因為有可能是店名或使用者，單一型態難處理
