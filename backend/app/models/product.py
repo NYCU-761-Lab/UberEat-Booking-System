@@ -15,6 +15,9 @@ class ProductModel(db.Model):
     # These 2 no need not to be unique!!! -> we can have multiple products belong to a shop or owner
     owner = db.Column(db.String(256), db.ForeignKey('user.account'), nullable = False)
     belong_shop_name = db.Column(db.String(256), db.ForeignKey('shop.shop_name'), nullable = False, primary_key = True)
+
+    # 給 order_details 的 backref, product table 內的 order_details backref
+    db_product_order_details = db.relationship("OrderDetailsModel", backref="product")
     
     def __init__(self, product_name, picture, price, quantity, user_account, shop_name):
         self.product_name = product_name

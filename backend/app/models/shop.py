@@ -15,6 +15,8 @@ class ShopModel(db.Model):
     owner = db.Column(db.String(256), db.ForeignKey('user.account'), unique = True, nullable = False)
     # from app.models.product import ProductModel
     db_shop_product = db.relationship("ProductModel", backref="shop")
+    db_shop_order = db.relationship("OrderModel", backref="shop")
+
 
     def __init__(self, shop_name, latitude, longitude, shop_type, owner):
         self.shop_name = shop_name
