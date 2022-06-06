@@ -47,6 +47,8 @@ def create_tables():
     from models.shop import ShopModel
     from models.product import ProductModel
     from models.transaction import TransactionModel
+    from models.order import OrderModel
+    from models.order_details import OrderDetailsModel
     db.init_app(app)
     db.create_all()
 
