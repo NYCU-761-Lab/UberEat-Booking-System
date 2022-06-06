@@ -420,17 +420,106 @@
 
       <!-- My Order Page -->
       <div id="menuMyOrder" class="tab-pane fade">
-        <p>my order</p>
+        <div class="form-horizontal" style="padding:10px;">
+          <div class="form-group">
+            <label class="col-sm-3">
+              <h4 style="margin-bottom: 15px;">Action</h4>
+              <select class="form-control" id="myOrderType">
+                <option>All</option>
+                <option>Finished</option>
+                <option>Not Finish</option>
+                <option>Canceled</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div>
+          <table id="data" class="table myOrderResult" style=" margin-top: 15px;">
+            <thead>
+              <tr>
+                <th scope="col">Order ID</th>
+                <th scope="col">Status</th>
+                <th scope="col">Start</th>
+                <th scope="col">End</th>
+                <th scope="col">Shop Name</th>
+                <th scope="col">Total Price</th>
+                <th scope="col">Order Details</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Shop Order Page -->
       <div id="menuShopOrder" class="tab-pane fade">
-        <p>shop order</p>
+        <div class="form-horizontal" style="padding:10px;">
+          <div class="form-group">
+            <label class="col-sm-3">
+              <h4 style="margin-bottom: 15px;">Action</h4>
+              <select class="form-control" id="shopOrderType">
+                <option>All</option>
+                <option>Finished</option>
+                <option>Not Finish</option>
+                <option>Canceled</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div>
+          <table id="data" class="table shopOrderResult" style=" margin-top: 15px;">
+            <thead>
+              <tr>
+                <th scope="col">Order ID</th>
+                <th scope="col">Status</th>
+                <th scope="col">Start</th>
+                <th scope="col">End</th>
+                <th scope="col">Shop Name</th>
+                <th scope="col">Total Price</th>
+                <th scope="col">Order Details</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Transaction Record Page -->
       <div id="menuRecord" class="tab-pane fade">
-        <p>transaction record</p>
+
+        <div class="form-horizontal" style="padding:10px;">
+          <div class="form-group">
+            <label class="col-sm-3">
+              <h4 style="margin-bottom: 15px;">Action</h4>
+              <select class="form-control" id="transactionType">
+                <option>All</option>
+                <option>Payment</option>
+                <option>Receive</option>
+                <option>Recharge</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div>
+          <table id="data" class="table tranctionResult" style=" margin-top: 15px;">
+            <thead>
+              <tr>
+                <th scope="col">Record ID</th>
+                <th scope="col">Action</th>
+                <th scope="col">Time</th>
+                <th scope="col">Trader</th>
+                <th scope="col">Amount change</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+        
       </div>
 
       <!-- Log Out Page -->
@@ -503,6 +592,7 @@
   <script src="js/searchJquery.js"></script>
   <script src="js/productJquery.js"></script>
   <script src="js/homeOrder.js"></script>
+  <script src="js/transactionRecord.js"></script>
 
   <script src = "https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.1/jquery.twbsPagination.min.js"> </script>  
 </body>
