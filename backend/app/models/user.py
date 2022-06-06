@@ -27,6 +27,8 @@ class UserModel(db.Model):
     # from app.models.product import ProductModel
     db_user_shop = db.relationship("ShopModel", backref="user")
     db_user_product = db.relationship("ProductModel", backref="user")
+    db_user_transaction = db.relationship("TransactionModel", backref="user")
+    db_user_order = db.relationship("OrderModel", backref="user")
 
     def __init__(self, account, password, username, phone_number, latitude, longitude, role):
         self.account = account

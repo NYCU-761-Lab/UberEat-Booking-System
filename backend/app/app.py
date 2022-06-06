@@ -7,6 +7,7 @@ import config_secret
 from resources.user import auth_register, auth_login, auth_check_account, auth_account_information, auth_edit_location, auth_recharge
 from resources.shop import shop_register, shop_name_filter, shop_distance_filter, shop_type_filter, get_shop_type, get_shop_distance, get_shop_latitude, get_shop_longitude, get_shop_name_of_user, shop_check_name
 from resources.product import product_register, get_product_info_of_a_shop, product_name_filter, product_price_filter, product_edit_price, product_edit_quantity, product_delete
+from resources.transaction import transaction_type_filter
 
 app = Flask(__name__)
 
@@ -21,8 +22,8 @@ CORS(app)
 # engine = create_engine('postgresql://scott:tiger@localhost:8080/mydatabase')
 # basedir= os.path.abspath(os.path.dirname(__file__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.path.join(basedir,'data.sqlite')
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/database2.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/angelahsi/Desktop/NYCU/大二下課程/資料庫/HW2/UberEat-Booking-System/backend/database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/database2.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/angelahsi/Desktop/NYCU/大二下課程/資料庫/HW2/UberEat-Booking-System/backend/database.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -45,6 +46,7 @@ def create_tables():
     from models.user import UserModel
     from models.shop import ShopModel
     from models.product import ProductModel
+    from models.transaction import TransactionModel
     db.init_app(app)
     db.create_all()
 
@@ -76,7 +78,6 @@ api.add_resource( get_shop_longitude, "/shop/get_shop_longitude")
 api.add_resource( get_shop_name_of_user, "/shop/get_shop_name_of_user")
 api.add_resource( shop_check_name, "/shop/check_name")
 
-
 # product api
 api.add_resource( product_register, "/product/register")
 api.add_resource( get_product_info_of_a_shop, "/product/list")
@@ -86,7 +87,8 @@ api.add_resource( product_edit_price, "/product/edit_price")
 api.add_resource( product_edit_quantity, "/product/edit_quantity")
 api.add_resource( product_delete, "/product/delete")
 
-
+# transaction api
+api.add_resource( transaction_type_filter, "/transaction/type_filter")
 
 if __name__ == '__main__':
     app.run( debug = True )
