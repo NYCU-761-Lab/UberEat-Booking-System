@@ -31,7 +31,7 @@ $(document).ready(function() {
         $("#accountPhone").html(myJson['phone_number']);
         $("#accountLatitude").html(myJson['latitude']);
         $("#accountLongitude").html(myJson['longitude']);
-        $("#accountBalance").html(0);  // 要改成myJson['balance']
+        $("#accountBalance").html(myJson['balance']); 
     });
 
     

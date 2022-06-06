@@ -203,8 +203,10 @@ $(document).ready(function() {
 
     // recharge the wallet
     $('.btn-wallet').click(async function() {
-        let originalVal = Number($('#accountBalance').val());
-        let addValue = Number($('.walletVal').val());
+        // let originalVal = Number($('#accountBalance').val());
+        // let addValue = Number($('.walletVal').val());
+        let originalVal = $('#accountBalance').val();
+        let addValue = $('.walletVal').val();
 
         // $("#accountBalance").html(originalVal + addValue);
         // $("#accountBalance").val(originalVal + addValue);
@@ -218,7 +220,7 @@ $(document).ready(function() {
         let body = {
             'value': addValue
         }
-        fetch(request_url + "/auth/recharge", {
+        await fetch(request_url + "/auth/recharge", {
             method: 'PUT',
             headers: headers,
             body: JSON.stringify(body)
@@ -229,14 +231,12 @@ $(document).ready(function() {
         })
         .then(function(myJson) {
             if (statusCode === 200) {
-                $("#accountBalance").html(originalVal + addValue);
-                $("#accountBalance").val(originalVal + addValue);
                 alert(myJson['message']);
+                location.reload();  // refresh the page
             } else {
                 alert(myJson['message']);
             }
             $(".walletVal").val("");
         });
-        location.reload();  // refresh the page
     });
 });
