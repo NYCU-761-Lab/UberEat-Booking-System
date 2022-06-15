@@ -210,7 +210,7 @@ class order_make(Resource):
 class order_user_filter(Resource):
 
     parser = reqparse.RequestParser()
-    parser.add_argument('req_status', type = str, required = True,  # 計算距離, SID
+    parser.add_argument('req_status', type = str, required = True,  
                         help = 'This field cannot be left blank.')
 
     @jwt_required(optional = True)
@@ -241,11 +241,60 @@ class order_user_filter(Resource):
                           single_order.status, 
                           single_order.start_time, 
                           single_order.end_time, 
-                          single_order.shop_name, 
+                          single_order.shop_name,   # user 向誰下單
                           single_order.total,
                           action ]
 
             my_order_list.append(info_list)
         
         return {'my_order_list': my_order_list}, 200
+
+
+# 7. shop 訂單 filter
+class order_shop_filter(Resource):
+
+    parser = reqparse.RequestParser()
+    parser.add_argument('req_status', type = str, required = True,  
+                        help = 'This field cannot be left blank.')
+
+    @jwt_required(optional = True)
+    def post(self):
+        user_account = get_jwt_identity()
+        # 1. check is valid user
+        user = UserModel.query.filter_by(account = user_account).one_or_none() 
+        if not user:
+            return {'message': 'This user does not exist.'}, 400
+
+        # unfold data and check
+        data = order_shop_filter.parser.parse_args()
+        req_status    = data['req_status']
+
+        # 2. shop 不存在 
+        shop = ShopModel.query.filter_by(owner = user.account).one_or_none()
+        if not shop:
+            return {'message': 'This user does not have a shop.'}, 400
+
+        # 3. req_status 錯誤
+        if req_status != "Finished" and req_status != "Not Finish" and req_status != "Cancel": # 一個都對不上
+            return {'message': 'The format of request status is wrong.'}, 400
+        
+        # 4. 成功取得 order, order.owner 是下單的人
+        shop_order_list = []
+        all_order = OrderModel.query.filter_by(shop_name = shop.shop_name, status = req_status).all()  # query will return a list of tuple
+        for single_order in all_order:
+            action = []
+            if single_order.status == "Not Finish": # only option: 未完成可取消、未完成可以完成
+                action = ["cancel", "done"]
+
+            info_list = [ single_order.order_id,
+                          single_order.status, 
+                          single_order.start_time, 
+                          single_order.end_time, 
+                          single_order.owner,   # shop 被誰下訂單
+                          single_order.total,
+                          action ]
+
+            shop_order_list.append(info_list)
+        
+        return {'shop_order_list': shop_order_list}, 200
         
