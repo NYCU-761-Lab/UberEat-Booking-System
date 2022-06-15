@@ -14,7 +14,7 @@ class OrderModel(db.Model):
     sub_total = db.Column(db.Float(), nullable = False)
     total = db.Column(db.Float(), nullable = False)
     
-    # 訂單擁有人
+    # 訂單擁有人  *是下單的使用者*
     owner = db.Column(db.String(256), db.ForeignKey('user.account'), nullable = False)
     # 下單店家
     shop_name = db.Column(db.String(256), db.ForeignKey('shop.shop_name'), nullable = False) # 應該不用設成 foreign key, 因為有可能是店名或使用者，單一型態難處理
