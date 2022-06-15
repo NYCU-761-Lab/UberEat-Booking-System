@@ -25,3 +25,7 @@ class TransactionModel(db.Model):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+
+    def add_to_flush(self):
+        db.session.add(self)
+        db.session.flush()

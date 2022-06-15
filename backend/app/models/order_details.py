@@ -17,3 +17,7 @@ class OrderDetailsModel(db.Model):
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+
+    def add_to_flush(self): # add the "whole" object, not edit the existing object
+        db.session.add(self)
+        db.session.flush()

@@ -31,6 +31,9 @@ class ProductModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def flush_to_db(self):      # "edit" existing content
+        db.session.flush()
+
     @classmethod
     def find_by_product_name(cls, product_name):
         return cls.query.filter_by(product_name=product_name).first()
