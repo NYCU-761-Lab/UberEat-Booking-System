@@ -50,6 +50,7 @@ def create_tables():
     from models.transaction import TransactionModel
     from models.order import OrderModel
     from models.order_details import OrderDetailsModel
+    from models.img_per import ImgPerModel
     db.init_app(app)
     db.create_all()
 

@@ -6,11 +6,13 @@ import werkzeug
 from models.user import UserModel
 from models.shop import ShopModel
 from models.product import ProductModel
+from models.img_per import ImgPerModel
 import numpy as np
 import cv2
 import base64
 import ast
 import os
+import uuid
 
 
 ##### register ########################################################################
@@ -64,13 +66,19 @@ class product_register(Resource):
         # can save type: jpg(jpeg), png, bmp (svg will fail)
         img_type = picture_base64[ picture_base64.find("/")+1 : picture_base64.find(";") ]
         pure_picture_base64 = picture_base64[ picture_base64.find(",")+1 :]  # delete header
-        # img_inside_url = "/Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/product_image2/" + user_account + "_" + product_name + "." + img_type
-        img_inside_url = "/Users/angelahsi/Desktop/NYCU/大二下課程/資料庫/HW2/UberEat-Booking-System/backend/product_image/" + user_account + "_" + product_name + "." + img_type
+        img_inside_url = "/Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/product_image3/" + user_account + "_" + product_name + "." + img_type
+        # img_inside_url = "/Users/angelahsi/Desktop/NYCU/大二下課程/資料庫/HW2/UberEat-Booking-System/backend/product_image/" + user_account + "_" + product_name + "." + img_type
         with open(img_inside_url, "wb") as fh:
             fh.write(base64.urlsafe_b64decode(pure_picture_base64))
 
-        product = ProductModel(product_name, img_inside_url, ast.literal_eval(price), ast.literal_eval(quantity), user_account, shop.shop_name)
+        # ** changed here **
+        img_per_id = str(uuid.uuid4())
+        while ImgPerModel.query.filter_by(per_id = img_per_id).one_or_none() != None:
+            img_per_id = str(uuid.uuid4())
+        product = ProductModel(product_name, img_inside_url, ast.literal_eval(price), ast.literal_eval(quantity), user_account, shop.shop_name, img_per_id)
         product.save_to_db()
+        img_per = ImgPerModel(img_per_id, picture_base64)
+        img_per.save_to_db()
         return {'message': 'Product has been created successfully.'}, 200
 
 ##### edit product ########################################################################

@@ -191,8 +191,9 @@ class order_make(Resource):
                 product_name = tuple[0]
                 quantity = tuple[1]
                 quantity = ast.literal_eval(quantity) # change the quantity into positive integer
-                # (self, order_id, product_name, product_number):
-                order_detail = OrderDetailsModel(order_id, product_name, quantity)
+                product = ProductModel.query.filter_by(belong_shop_name = order_shop_name, product_name = product_name).one_or_none()
+                # (self, order_id, product_name, product_number, product_then_price, product_img_per_id):
+                order_detail = OrderDetailsModel(order_id, product_name, quantity, product.price, product.img_per_id)
                 order_detail.add_to_flush()
 
             # 6. commit all the flush in different models, represented by OrderModel
