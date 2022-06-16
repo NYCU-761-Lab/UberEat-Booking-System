@@ -1,12 +1,12 @@
 $(document).ready(function() {
-    const accessToken = localStorage.getItem("tokenStorage");
+    const accessToken = sessionStorage.getItem("tokenStorage");
     let request_url = "http://127.0.0.1:8080";
     // global variables
     let shopName = null;
     let deliverType = null;
     let orderedProducts = [];
-    // console.log(accessToken);
-
+    let frontend_totalPrice = null;
+    
 
     // edit the ordered products in the menu
     $(document).on('click', '.btn-add', async function(e) {  // add one product in menu
@@ -85,7 +85,7 @@ $(document).ready(function() {
 
 
         // calculate delivery fee
-        if (deliverType === "Delivery") {
+        if (deliverType === "delivery") {
             body = {
                 'shop_name': shopName
             }
@@ -107,19 +107,17 @@ $(document).ready(function() {
             if (deliveryFee < 10) deliveryFee = 10;
             deliveryFee = Math.round(deliveryFee);  // 四捨五入
 
-        } else if (deliverType === "Pick-up") {
+        } else if (deliverType === "pickup") {
             deliveryFee = 0;
         }
 
 
         // calculate all prices
         totalPrice = subTotal + deliveryFee;
-        $('#subtotalPrice').val(Number(subTotal));
-        $('#subtotalPrice').html(Number(subTotal));
-        $('#deliveryPrice').val(Number(deliveryFee));
-        $('#deliveryPrice').html(Number(deliveryFee));
-        $('#totalPrice').val(Number(totalPrice));
-        $('#totalPrice').html(Number(totalPrice));
+        frontend_totalPrice = totalPrice;
+        $('#subtotalPrice').text(subTotal);
+        $('#deliveryPrice').text(deliveryFee);
+        $('#totalPrice').text(totalPrice);
 
 
         // show the ordered products on the "calculated modal"
@@ -153,8 +151,6 @@ $(document).ready(function() {
     // click the Order button
     $('.btn-order').click(async function(e) {
         $("#calculateModal").find('tbody').empty();
-        // console.log(shopName);
-        // console.log(orderedProducts);
 
         // get order details to use API
         let deliverType = $('#deliveryType').val();
@@ -172,7 +168,8 @@ $(document).ready(function() {
         let body = {
             'order_shop_name': shopName,
             'order_details': orderDetails,
-            'delivery_type': deliverType
+            'delivery_type': deliverType,
+            'front_total_price': Number(frontend_totalPrice)
         }
         fetch(request_url + "/order/make", {
             method: 'POST',
@@ -180,6 +177,7 @@ $(document).ready(function() {
             body: JSON.stringify(body)
         })
         .then(function(response) {
+            console.log(response);
             statusCode = response['status'];
             return response.json();
         })
@@ -239,4 +237,9 @@ $(document).ready(function() {
             $(".walletVal").val("");
         });
     });
+
+
+    $('#homeItem').click(function() {
+        window.location.reload();
+    })
 });

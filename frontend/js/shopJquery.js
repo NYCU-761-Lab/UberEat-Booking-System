@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    const accessToken = localStorage.getItem("tokenStorage");
-    const account = localStorage.getItem("accountStorage");
+    const accessToken = sessionStorage.getItem("tokenStorage");
+    const account = sessionStorage.getItem("accountStorage");
     let request_url = "http://127.0.0.1:8080";
 
     // when clicking the shop menu page:

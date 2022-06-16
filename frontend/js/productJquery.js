@@ -12,7 +12,7 @@ function encodeImageFileAsURL(element) {
 }
 
 $(document).ready(function() {
-    const accessToken = localStorage.getItem("tokenStorage");
+    const accessToken = sessionStorage.getItem("tokenStorage");
     let request_url = "http://127.0.0.1:8080";
     let globalStoreName = null;
 
@@ -88,7 +88,7 @@ $(document).ready(function() {
                 .append($('<td>')
                     .append($('<button>')
                         .attr('type', 'button')
-                        .attr('class', 'btn btn-danger')
+                        .attr('class', 'btn btn-danger btn-delete')
                         .attr('id', 'deleteBtn_' + productName)
                         .text('Delete')
                     )
@@ -271,7 +271,7 @@ $(document).ready(function() {
 
     
     // delete current product
-    $(document).on('click', '.btn-danger', async function(e) { 
+    $(document).on('click', '.btn-delete', async function(e) { 
         let statusCode = null;
         // Get shop's name
         let headers = {

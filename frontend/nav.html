@@ -29,10 +29,10 @@
   <div class="container">
 
     <ul class="nav nav-tabs">
-      <li class="active"><a href="#home">Home</a></li>
+      <li class="active" id="homeItem"><a href="#home">Home</a></li>
       <li id="shopItem"><a href="#menu1">Shop</a></li>
-      <li><a href="#menuMyOrder">My Order</a></li>
-      <li><a href="#menuShopOrder">Shop Order</a></li>
+      <li id="myOrderItem"><a href="#menuMyOrder">My Order</a></li>
+      <li id="shopOrderItem"><a href="#menuShopOrder">Shop Order</a></li>
       <li id="RecordItem"><a href="#menuRecord">Transaction Record</a></li>
       <li><a href="#menu2">Log Out</a></li>
     </ul>
@@ -269,8 +269,8 @@
                       <h5>Type</h5>
                       <div style="width: 30%;">
                         <select class="form-control" id="deliveryType">
-                          <option>Delivery</option>
-                          <option>Pick-up</option>
+                          <option>delivery</option>
+                          <option>pickup</option>
                         </select>
                       </div>
                     </div>
@@ -426,17 +426,24 @@
               <h4 style="margin-bottom: 15px;">Action</h4>
               <select class="form-control" id="myOrderType">
                 <option>all</option>
-                <option>finished</option>
-                <option>not Finish</option>
-                <option>canceled</option>
+                <option>Finished</option>
+                <option>Not Finish</option>
+                <option>Cancel</option>
               </select>
             </label>
           </div>
         </div>
+
+        <button id="myOrder-cancels-btn" type="button" class="btn btn-danger" style="margin-left:8px;">
+          Cancel selected orders
+        </button>
+
         <div>
           <table id="data" class="table myOrderResult" style=" margin-top: 15px;">
             <thead>
               <tr>
+                <th scope="col"></th>
+                <th scope="col">#</th>
                 <th scope="col">Order ID</th>
                 <th scope="col">Status</th>
                 <th scope="col">Start</th>
@@ -448,8 +455,62 @@
               </tr>
             </thead>
             <tbody>
+              <!-- for test -->
+              <tr>
+                <th scope="row">1</th>
+                <td>not finished</td>
+                <td>10:00</td>
+                <td>11:00</td>
+                <td>macdonald</td>
+                <td>100</td>            
+                <td><button type="button" id="orderDetailBtn_1_shopName_macdonald" class="btn btn-info btn-orderDetail" data-toggle="modal" data-target="#orderDetailModal">order details</button></td>
+              </tr>  
+
+
             </tbody>
           </table>
+
+          <!-- Modal: myOrder's order details modal -->
+          <div class="modal fade" id="orderDetailModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">                  
+                <div class="modal-header">
+                  <h5 class="modal-title edit-modal-text" id="staticBackdropLabel">My Order Details</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="  col-xs-12">
+                      <table class="table orderDetailTable" style=" margin-top: 15px;">
+                        <thead>
+                          <tr>
+                            <th scope="col">Picture</th>
+                            <th scope="col">meal name</th>
+                            <th scope="col">price</th>
+                            <th scope="col">Order Quantity</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          
+
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <div>
+                    <span>Subtotal <span id="order_subtotal">0</span></span><br/>
+                    <span>Delivery fee <span id="order_deliveryFee" >0</span></span><br/>
+                    <span>Total Price <span id="order_totalPrice">0</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -461,17 +522,27 @@
               <h4 style="margin-bottom: 15px;">Action</h4>
               <select class="form-control" id="shopOrderType">
                 <option>all</option>
-                <option>finished</option>
-                <option>not finish</option>
-                <option>canceled</option>
+                <option>Finished</option>
+                <option>Not Finish</option>
+                <option>Cancel</option>
               </select>
             </label>
           </div>
         </div>
+
+        <button id="shopOrder-dones-btn" type="button" class="btn btn-success" style="margin-left:8px;">
+          Finish selected orders
+        </button>
+        <button id="shopOrder-cancels-btn" type="button" class="btn btn-danger" style="margin-left:8px;">
+          Cancel selected orders
+        </button>
+
         <div>
           <table id="data" class="table shopOrderResult" style=" margin-top: 15px;">
             <thead>
               <tr>
+                <th scope="col"></th>
+                <th scope="col">#</th>
                 <th scope="col">Order ID</th>
                 <th scope="col">Status</th>
                 <th scope="col">Start</th>
@@ -483,8 +554,66 @@
               </tr>
             </thead>
             <tbody>
+              <!-- for test -->
+              <tr>
+                <th scope="row">2</th>
+                <td>not finished</td>
+                <td>10:00</td>
+                <td>11:00</td>
+                <td>macdonald</td>
+                <td>100</td>            
+                <td><button type="button" id="orderDetailBtn_1_shopName_macdonald" class="btn btn-info btn-orderDetail" data-toggle="modal" data-target="#orderDetailModal">order details</button></td>
+                <td>
+                  <button type="button" class="btn btn-done" id="doneBtn_2" style="color: white; background-color: rgb(41, 155, 41);">Done</button>
+                  <button type="button" class="btn btn-danger">Cancel</button>
+                </td>
+              </tr> 
+
+
             </tbody>
           </table>
+
+          <!-- Modal: shopOrder's order details modal -->
+          <div class="modal fade" id="shopOrderDetailModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">                  
+                <div class="modal-header">
+                  <h5 class="modal-title edit-modal-text" id="staticBackdropLabel">Shop Order Details</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="  col-xs-12">
+                      <table class="table shopOrderDetailTable" style=" margin-top: 15px;">
+                        <thead>
+                          <tr>
+                            <th scope="col">Picture</th>
+                            <th scope="col">meal name</th>
+                            <th scope="col">price</th>
+                            <th scope="col">Order Quantity</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <div>
+                    <span>Subtotal <span id="shopOrder_subtotal">0</span></span><br/>
+                    <span>Delivery fee <span id="shopOrder_deliveryFee" >0</span></span><br/>
+                    <span>Total Price <span id="shopOrder_totalPrice">0</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
         </div>
       </div>
 
@@ -508,6 +637,7 @@
           <table id="data" class="table tranctionResult" style=" margin-top: 15px;">
             <thead>
               <tr>
+                <th scope="col">#</th>
                 <th scope="col">Record ID</th>
                 <th scope="col">Action</th>
                 <th scope="col">Time</th>
@@ -593,6 +723,9 @@
   <script src="js/productJquery.js"></script>
   <script src="js/homeOrder.js"></script>
   <script src="js/transactionRecord.js"></script>
+  <script src="js/myOrder.js"></script>
+  <script src="js/shopOrder.js"></script>
+  <script src="js/tokenAccess.js"></script>
 
   <script src = "https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.1/jquery.twbsPagination.min.js"> </script>  
 </body>
