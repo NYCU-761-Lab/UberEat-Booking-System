@@ -39,7 +39,7 @@ class transaction_type_filter(Resource):
         transaction_list = []
         for single_record in query:
             single_list = [single_record.transaction_id, single_record.type, single_record.time, single_record.trader, single_record.amount_of_money]
-            print(single_record.trader)
+            # print(single_record.trader)
             transaction_list.append(single_list)
         
         return {'transaction_list': transaction_list}, 200
