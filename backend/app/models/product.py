@@ -40,6 +40,10 @@ class ProductModel(db.Model):
         db.session.flush()
 
     @classmethod
+    def class_flush_to_db(self):
+         db.session.flush()
+
+    @classmethod
     def find_by_product_name(cls, product_name):
         return cls.query.filter_by(product_name=product_name).first()
 

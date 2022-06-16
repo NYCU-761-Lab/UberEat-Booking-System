@@ -202,7 +202,7 @@ class order_make(Resource):
             # 6. commit all the flush in different models, represented by OrderModel
             OrderModel.commit_order_session()
 
-            return {'message': 'Successfully made the order!'}, 200
+            return {'message': 'Successfully Made the order!'}, 200
             
         except Exception as e:   # catch 手動 raise exception
             print(e)    # print exception -> 自己 raise 好像是 none
@@ -284,7 +284,7 @@ class order_user_cancel(Resource):
                 # 商品還存在 -> 把數量加回去    
                 product.quantity += product_number
 
-            product.flush_to_db()   # 數量加完後統一 flush
+            ProductModel.class_flush_to_db()   # 數量加完後統一 flush
 
             # 4. 修改 user(下單人) 錢包
             user = UserModel.query.filter_by(account = user_account).one_or_none()
@@ -323,7 +323,7 @@ class order_user_cancel(Resource):
 
             # 8. db commit
             OrderModel.commit_order_session()
-            return {'message': 'Successfully cancel the order!'}, 200
+            return {'message': 'Successfully Cancel the order!'}, 200
 
 
         except Exception as e:   # catch 手動 raise exception
@@ -411,13 +411,142 @@ class order_shop_complete(Resource):
             order.flush_to_db()
 
             OrderModel.commit_order_session()
-            return {'message': 'Successfully complete the order!'}, 200
+            return {'message': 'Successfully Complete the order!'}, 200
 
         except Exception as e:   # catch 手動 raise exception
             print(e)    # print exception -> 自己 raise 好像是 none
             OrderModel.rollback_order_session()
             return {'message': 'Fault in db process! : ('}, 400
 
+
+# 4. 店家 取消訂單
+class order_shop_cancel(Resource):
+
+    parser = reqparse.RequestParser()
+    parser.add_argument('order_id', type = str, required = True,    # order_id is enough -> it is primary key in order table
+                        help = 'This field cannot be left blank.')
+
+    @jwt_required(optional = True)
+    def post(self):
+        user_account = get_jwt_identity()
+        # 1. check is valid user
+        user = UserModel.query.filter_by(account = user_account).one_or_none() 
+        if not user:
+            return {'message': 'This user does not exist.'}, 400
+
+        data = order_shop_cancel.parser.parse_args()
+        order_id     = data['order_id']
+
+        # 2. check order 是否存在
+        order = OrderModel.query.filter_by(order_id = order_id).one_or_none() 
+        if not order:
+            return {'message': 'This order does not exist.'}, 400
+
+        # 3. check user 是否有 shop
+        shop = ShopModel.query.filter_by(owner = user.account).one_or_none() 
+        if not shop:
+            return {'message': 'This user does not own a shop.'}, 400
+        
+        # 4. check "user 的 shop" 是否擁有該 order
+        if order.shop_name != shop.shop_name:
+            return {'message': 'This user\'s shop does not own this order.'}, 400
+
+
+        # 5. "user 的 shop" 擁有該 order -> 查看狀態是不是 "Not Finish", 不是的話不能操作
+        if order.status == "Finished":
+            return {'message': 'Can not cancel the order. The order has already been completed by your shop.'}, 400
+        elif order.status == "Cancel":
+            return {'message': 'Can not cancel the order. The order has already been canceled by your shop or the user.'}, 400
+
+
+        # 6. 可以取消訂單
+        """
+            取消訂單：
+            (1) 改訂單 status, 改訂單 endtime
+            (2) 恢復庫存數量
+            (3) 修改雙方錢包
+            (4) 產生對應 undo 退錢交易紀錄
+
+            *** try 開始失敗的東西(檢查後迅速改變導致的失敗)，直接跳 exception return
+        """
+        try:
+            # 0. 訂下 cancel 時間當作結束時間
+            nowtime = datetime.datetime.now() # 先訂下交易時間 -> transaction, order 
+            time_string = nowtime.strftime("%Y-%m-%d %H:%M:%S")  # return type is string
+
+            # 1. 拿到 order 本體 & order_detail 們，並確認不為空
+            order = OrderModel.query.filter_by(order_id = order_id).one_or_none()
+            if not order:
+                raise
+
+            order_details = OrderDetailsModel.query.filter_by(order_id = order_id).all()  # multiple rows
+            if not order_details:
+                raise
+
+            # 2.  確認拿到兩者後，改訂單 status
+            order.status = "Cancel"
+            order.end_time = time_string
+            order.flush_to_db()
+
+            # 3. 確認有拿到 order_detail 後，恢復庫存數量
+            # 已經下架的商品數量不用恢復，退款部分直接用 total price
+            for single_detail in order_details:
+                product_name = single_detail.product_name
+                product_number = single_detail.product_number
+                product = ProductModel.query.filter_by(product_name = product_name).one_or_none()
+                if not product: # 商品已被刪除 -> 跳過數量操作
+                    continue    
+
+                # 商品還存在 -> 把數量加回去    
+                product.quantity += product_number
+
+            ProductModel.class_flush_to_db()   # 數量加完後統一 flush
+
+            # 4. 修改 下單人錢包
+            user_order_owner = UserModel.query.filter_by(account = order.owner).one_or_none()
+            if not user_order_owner:
+                raise
+            user_order_owner.balance += order.total
+            user_order_owner.flush_to_db()
+
+            # 5. 修改 shop_owner 錢包
+            shop = ShopModel.query.filter_by(shop_name = order.shop_name).one_or_none() # 先找到下訂單的店
+            if not shop:
+                raise
+
+            shop_owner = UserModel.query.filter_by(account = shop.owner).one_or_none()  # 再找到下訂單的店的 owner
+            if not shop_owner:
+                raise
+            
+            shop_owner.balance -= order.total
+            shop_owner.flush_to_db()
+
+            # 6. 加一筆 user money back 紀錄
+            transaction_id_user = str(uuid.uuid4())
+            # check that the id is not used since uuid4 is generated by the random number
+            while TransactionModel.query.filter_by(transaction_id = transaction_id_user).one_or_none() != None:
+                transaction_id_user = str(uuid.uuid4())
+            transaction_user = TransactionModel(transaction_id_user, "receive", order.total, time_string, user_order_owner.account, shop.shop_name) # tran_owner, store_name
+            transaction_user.add_to_flush()
+
+            # 7. 加一筆 shop_owner money deduct 紀錄
+            transaction_id_shop_owner = str(uuid.uuid4())
+            # check that the id is not used since uuid4 is generated by the random number
+            while TransactionModel.query.filter_by(transaction_id = transaction_id_shop_owner).one_or_none() != None:
+                transaction_id_shop_owner = str(uuid.uuid4())
+            transaction_shop_owner = TransactionModel(transaction_id_shop_owner, "payment", order.total, time_string, shop_owner.account, user_order_owner.account) # tran_owner, orderer
+            transaction_shop_owner.add_to_flush()
+
+            # 8. db commit
+            OrderModel.commit_order_session()
+            return {'message': 'Successfully Cancel the order!'}, 200
+
+
+        except Exception as e:   # catch 手動 raise exception
+            print(e)    # print exception -> 自己 raise 好像是 none
+            OrderModel.rollback_order_session()
+            return {'message': 'Fault in db process! : ('}, 400
+        
 
 #----------------------------------------- filter / detail -----------------------------------------
 
