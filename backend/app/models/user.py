@@ -44,7 +44,7 @@ class UserModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def flush_to_db(self):
+    def flush_to_db(self):  # first get object, use the object to get this function
         db.session.flush()
 
     def check_password(self, password):

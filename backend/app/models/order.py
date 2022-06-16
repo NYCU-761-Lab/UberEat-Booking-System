@@ -42,6 +42,9 @@ class OrderModel(db.Model):
     def add_to_flush(self): # add the whole object, not edit the existing object
         db.session.add(self)
         db.session.flush()
+    
+    def flush_to_db(self): # add the whole object, not edit the existing object
+        db.session.flush()
 
     # session.begin() can't use and didn't adopt by me
     @classmethod  # can be called by the class
