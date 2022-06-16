@@ -15,21 +15,29 @@ class ProductModel(db.Model):
     # These 2 no need not to be unique!!! -> we can have multiple products belong to a shop or owner
     owner = db.Column(db.String(256), db.ForeignKey('user.account'), nullable = False)
     belong_shop_name = db.Column(db.String(256), db.ForeignKey('shop.shop_name'), nullable = False, primary_key = True)
+    
+    # ** add **
+    img_per_id = db.Column(db.String(256), db.ForeignKey('img_per.per_id'), nullable = False) # no need to be unique
 
     # 給 order_details 的 backref, product table 內的 order_details backref
-    db_product_order_details = db.relationship("OrderDetailsModel", backref="product")
+    # db_product_order_details = db.relationship("OrderDetailsModel", backref="product")
+    # ***** since we can delete the product, it will be problem if we delete it
     
-    def __init__(self, product_name, picture, price, quantity, user_account, shop_name):
+    def __init__(self, product_name, picture, price, quantity, user_account, shop_name, img_per_id):
         self.product_name = product_name
         self.picture = picture            # url of local host to access the picture
         self.price = price
         self.quantity = quantity
         self.owner = user_account
         self.belong_shop_name = shop_name
+        self.img_per_id = img_per_id
 
     def save_to_db(self):
         db.session.add(self)
         db.session.commit()
+
+    def flush_to_db(self):      # "edit" existing content
+        db.session.flush()
 
     @classmethod
     def find_by_product_name(cls, product_name):
