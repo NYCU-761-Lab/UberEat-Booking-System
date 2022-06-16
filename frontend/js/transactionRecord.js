@@ -37,11 +37,10 @@ $(document).ready(function() {
 
             // sort the record by the time
             finalList.sort(function(a, b) {
-                let x = a[0].toLowerCase();
-                let y = b[0].toLowerCase();
-                if (x < y) { return 1; }
-                // if (x > y) { return -1; }
-                return 0;
+                let x = a[2];
+                let y = b[2];
+                if (x <= y) { return -1; }
+                return 1;
             });
         } else {
             finalList = await getTransactionRecord(actionType);
@@ -92,6 +91,9 @@ $(document).ready(function() {
             // add elements to html DOM
             $(".tranctionResult").find('tbody')
             .append($('<tr>')
+                .append($('<th>')
+                    .text(Number(i) + 1)
+                )
                 .append($('<th>')
                     .attr('scope', 'row')
                     .text(transactionID)

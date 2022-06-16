@@ -6,8 +6,7 @@ $(document).ready(function() {
     let deliverType = null;
     let orderedProducts = [];
     let frontend_totalPrice = null;
-    // console.log(accessToken);
-
+    
 
     // edit the ordered products in the menu
     $(document).on('click', '.btn-add', async function(e) {  // add one product in menu
@@ -238,4 +237,9 @@ $(document).ready(function() {
             $(".walletVal").val("");
         });
     });
+
+
+    $('#homeItem').click(function() {
+        window.location.reload();
+    })
 });

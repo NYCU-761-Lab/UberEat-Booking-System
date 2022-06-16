@@ -37,11 +37,10 @@ $(document).ready(function() {
 
             // sort the record by the time
             finalList.sort(function(a, b) {
-                let x = a[0].toLowerCase();
-                let y = b[0].toLowerCase();
-                if (x < y) { return 1; }
-                // if (x < y) { return -1; }
-                return 0;
+                let x = a[2];
+                let y = b[2];
+                if (x <= y) { return -1; }
+                return 1;
             });
         } else {
             finalList = await getMyOrderList(actionType);
@@ -106,6 +105,9 @@ $(document).ready(function() {
                         )
                     )
                     .append($('<th>')
+                        .text(Number(i) + 1)
+                    )
+                    .append($('<th>')
                         .attr('scope', 'row')
                         .text(myOrderID)
                     )
@@ -148,6 +150,9 @@ $(document).ready(function() {
                 $(".myOrderResult").find('tbody')
                 .append($('<tr>')
                     .append($('<th>'))  // no checkbox
+                    .append($('<th>')
+                        .text(Number(i) + 1)
+                    )
                     .append($('<th>')
                         .attr('scope', 'row')
                         .text(myOrderID)
@@ -285,6 +290,7 @@ $(document).ready(function() {
                 getFinalList();  // 刷新列表
             } else {
                 alert(myJson['message']);
+                getFinalList();  // 刷新列表
             }
         });
     });
@@ -309,7 +315,8 @@ $(document).ready(function() {
     // cancel these items
     $('#myOrder-cancels-btn').click(async function() {
         console.log(checkItems);
-        for (orderID in checkItems) {
+        for (i in checkItems) {
+            let orderID = checkItems[i];
             let statusCode = null;
             let headers = {
                 "Content-Type": "application/json",
@@ -336,6 +343,7 @@ $(document).ready(function() {
                     getFinalList();  // 刷新列表
                 } else {
                     alert(myJson['message']);
+                    getFinalList();  // 刷新列表
                 }
             });
         }

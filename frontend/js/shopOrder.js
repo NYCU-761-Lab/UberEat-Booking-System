@@ -36,11 +36,10 @@ $(document).ready(function() {
 
             // sort the record by the time
             finalList.sort(function(a, b) {
-                let x = a[0].toLowerCase();
-                let y = b[0].toLowerCase();
-                if (x < y) { return 1; }
-                // if (x < y) { return -1; }
-                return 0;
+                let x = a[2];
+                let y = b[2];
+                if (x <= y) { return -1; }
+                return 1;
             });
         } else {
             finalList = await getShopOrderList(actionType);
@@ -109,6 +108,9 @@ $(document).ready(function() {
                         )
                     )
                     .append($('<th>')
+                        .text(Number(i) + 1)
+                    )
+                    .append($('<th>')
                         .attr('scope', 'row')
                         .text(shopOrderID)
                     )
@@ -150,6 +152,7 @@ $(document).ready(function() {
                             .attr('type', 'button')
                             .attr('class', 'btn btn-danger btn-cancel-shop')
                             .attr('id', 'cancelBtn_' + shopOrderID)
+                            .attr('style', 'margin-top: 5px;')
                             .text('Cancel')
                         )
                     )
@@ -158,6 +161,9 @@ $(document).ready(function() {
                 $(".shopOrderResult").find('tbody')
                 .append($('<tr>')
                     .append($('<th>'))  // no checkbox
+                    .append($('<th>')
+                        .text(Number(i) + 1)
+                    )
                     .append($('<th>')
                         .attr('scope', 'row')
                         .text(shopOrderID)
@@ -260,16 +266,13 @@ $(document).ready(function() {
         }
         // 顯示外送費用
         $('#shopOrder_subtotal').text(orderPrice[0]);
-        $('#sopOrder_deliveryFee').text(orderPrice[1]);
+        $('#shopOrder_deliveryFee').text(orderPrice[1]);
         $('#shopOrder_totalPrice').text(orderPrice[2]);
     });
 
 
     // Press "Done" button
     $(document).on('click', '.btn-done', async function(e) {
-        // Get shop's name
-        let shopName = getShopName();
-
         // complete the order
         let statusCode = null;
         let orderID = e.target.id.slice(8);
@@ -279,10 +282,9 @@ $(document).ready(function() {
             "Authorization": "Bearer " + accessToken
         }
         let body = {
-            'shop_name': shopName,
             'order_id': orderID
         }
-        fetch(request_url + "order/shop_complete", {
+        fetch(request_url + "/order/shop_complete", {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(body)
@@ -299,6 +301,7 @@ $(document).ready(function() {
                 getFinalList();  // 刷新列表
             } else {
                 alert(myJson['message']);
+                getFinalList();  // 刷新列表
             }
         });
     });
@@ -306,9 +309,6 @@ $(document).ready(function() {
 
     // Press "Cancel" button
     $(document).on('click', '.btn-cancel-shop', async function(e) { 
-        // Get shop's name
-        let shopName = getShopName();
-
         // cancel the order of the shop
         let statusCode = null;
         let orderID = e.target.id.slice(10);
@@ -318,7 +318,6 @@ $(document).ready(function() {
             "Authorization": "Bearer " + accessToken
         }
         let body = {
-            'shop_name': shopName,
             'order_id': orderID
         }
         fetch(request_url + "/order/shop_cancel", {
@@ -338,6 +337,7 @@ $(document).ready(function() {
                 getFinalList();  // 刷新列表
             } else {
                 alert(myJson['message']);
+                getFinalList();  // 刷新列表
             }
         });
     });
@@ -346,7 +346,7 @@ $(document).ready(function() {
     // Bonus
     // 把勾起來的 checkbox 加到 checkItems 裏面
     $(document).on('change', '.shopOrder_checkbox', function(e) {
-        let itemID = e.target.id.slice(7);
+        let itemID = e.target.id.slice(6);
         console.log(itemID);
         if(e.target.checked) {
             if (checkItems.includes(itemID) === false) {  // 避免重複加到 list
@@ -364,7 +364,8 @@ $(document).ready(function() {
     // finish these items
     $('#shopOrder-dones-btn').click(async function() {
         console.log(checkItems);
-        for (orderID in checkItems) {
+        for (i in checkItems) {
+            let orderID = checkItems[i];
             let statusCode = null;
             let headers = {
                 "Content-Type": "application/json",
@@ -391,6 +392,7 @@ $(document).ready(function() {
                     getFinalList();  // 刷新列表
                 } else {
                     alert(myJson['message']);
+                    getFinalList();  // 刷新列表
                 }
             });
         }
@@ -400,7 +402,9 @@ $(document).ready(function() {
     // cancel these items
     $('#shopOrder-cancels-btn').click(async function() {
         console.log(checkItems);
-        for (orderID in checkItems) {
+        for (i in checkItems) {
+            let orderID = checkItems[i];
+            // console.log(orderID);
             let statusCode = null;
             let headers = {
                 "Content-Type": "application/json",
@@ -427,6 +431,7 @@ $(document).ready(function() {
                     getFinalList();  // 刷新列表
                 } else {
                     alert(myJson['message']);
+                    getFinalList();  // 刷新列表
                 }
             });
         }
