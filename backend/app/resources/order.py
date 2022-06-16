@@ -246,7 +246,7 @@ class order_user_cancel(Resource):
         # 5. user 合法且擁有該 order，且 order.status == "Not Finish" -> user 可以取消訂單
         """
             取消訂單：
-            (1) 改訂單 status
+            (1) 改訂單 status, 改訂單 endtime
             (2) 恢復庫存數量
             (3) 修改雙方錢包
             (4) 產生對應 undo 退錢交易紀錄
@@ -269,6 +269,7 @@ class order_user_cancel(Resource):
 
             # 2.  確認拿到兩者後，改訂單 status
             order.status = "Cancel"
+            order.end_time = time_string
             order.flush_to_db()
 
             # 3. 確認有拿到 order_detail 後，恢復庫存數量
@@ -324,6 +325,93 @@ class order_user_cancel(Resource):
             OrderModel.commit_order_session()
             return {'message': 'Successfully cancel the order!'}, 200
 
+
+        except Exception as e:   # catch 手動 raise exception
+            print(e)    # print exception -> 自己 raise 好像是 none
+            OrderModel.rollback_order_session()
+            return {'message': 'Fault in db process! : ('}, 400
+
+
+# 3. 店家 完成訂單
+class order_shop_complete(Resource):
+
+    parser = reqparse.RequestParser()
+    parser.add_argument('order_id', type = str, required = True,    # order_id is enough -> it is primary key in order table
+                        help = 'This field cannot be left blank.')
+
+    @jwt_required(optional = True)
+    def post(self):
+        user_account = get_jwt_identity()
+        # 1. check is valid user
+        user = UserModel.query.filter_by(account = user_account).one_or_none() 
+        if not user:
+            return {'message': 'This user does not exist.'}, 400
+
+        data = order_shop_complete.parser.parse_args()
+        order_id     = data['order_id']
+
+        # 2. check order 是否存在
+        order = OrderModel.query.filter_by(order_id = order_id).one_or_none() 
+        if not order:
+            return {'message': 'This order does not exist.'}, 400
+
+        # 3. check user 是否有 shop
+        shop = ShopModel.query.filter_by(owner = user.account).one_or_none() 
+        if not shop:
+            return {'message': 'This user does not own a shop.'}, 400
+        
+        # 4. check "user 的 shop" 是否擁有該 order
+        if order.shop_name != shop.shop_name:
+            return {'message': 'This user\'s shop does not own this order.'}, 400
+
+
+        # 5. "user 的 shop" 擁有該 order -> 查看狀態是不是 "Not Finish", 不是的話不能操作
+        if order.status == "Finished":
+            return {'message': 'Can not complete the order. The order has already been completed by your shop.'}, 400
+        elif order.status == "Cancel":
+            return {'message': 'Can not complete the order. The order has already been canceled by your shop or the user.'}, 400
+
+        # 6. 確認 order 內的所有商品都還在，才能完成訂單
+        # 如果刪掉商品，但又再加回去一樣的商品名，仍然可以取消訂單
+        # 也並不會動到新商品的庫存
+        order_details = OrderDetailsModel.query.filter_by(order_id = order_id).all() 
+        if not order_details:
+            return {'message': 'Can not find the order detail of this order.'}, 400
+
+        can_complete_order = True
+        for single_detail in order_details:
+            product_name = single_detail.product_name
+            product = ProductModel.query.filter_by(product_name = product_name).one_or_none() 
+            if not product:
+                can_complete_order = False
+                break
+        
+        if can_complete_order == False:
+            return {'message': 'Some products in this order are no longer in your shop. Your shop can\'t complete the order.'}, 400
+        
+        # 7. 可以完成定單
+        """
+            完成訂單：
+            (1) 改訂單 status, 改訂單 end time 
+
+            * 不用動庫存、不用動錢包、不用動前流動的交易紀錄 -> make order 時已經做好了
+        """
+
+        try:
+            # 0. 訂下 cancel 時間當作結束時間
+            nowtime = datetime.datetime.now() # 先訂下交易時間 -> transaction, order 
+            time_string = nowtime.strftime("%Y-%m-%d %H:%M:%S")  # return type is string
+
+            order = OrderModel.query.filter_by(order_id = order_id).one_or_none() 
+            if not order:
+                raise
+            
+            order.status = "Finished"
+            order.end_time = time_string
+            order.flush_to_db()
+
+            OrderModel.commit_order_session()
+            return {'message': 'Successfully complete the order!'}, 200
 
         except Exception as e:   # catch 手動 raise exception
             print(e)    # print exception -> 自己 raise 好像是 none
