@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    const accessToken = localStorage.getItem("tokenStorage");
+    const accessToken = sessionStorage.getItem("tokenStorage");
     let request_url = "http://127.0.0.1:8080";
 
 
@@ -39,8 +39,8 @@ $(document).ready(function() {
             finalList.sort(function(a, b) {
                 let x = a[0].toLowerCase();
                 let y = b[0].toLowerCase();
-                if (x < y) { return 1; }
-                if (x > y) { return -1; }
+                if (x > y) { return 1; }
+                if (x < y) { return -1; }
                 return 0;
             });
         } else {

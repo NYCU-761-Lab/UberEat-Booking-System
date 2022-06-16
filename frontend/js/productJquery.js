@@ -12,7 +12,7 @@ function encodeImageFileAsURL(element) {
 }
 
 $(document).ready(function() {
-    const accessToken = localStorage.getItem("tokenStorage");
+    const accessToken = sessionStorage.getItem("tokenStorage");
     let request_url = "http://127.0.0.1:8080";
     let globalStoreName = null;
 

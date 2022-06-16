@@ -30,8 +30,8 @@ $(document).ready(function() {
             .then(function(myJson) {
                 if(statusCode === 200) {
                     const accessToken = myJson['access_token'];
-                    localStorage.setItem("tokenStorage", accessToken);
-                    localStorage.setItem("accountStorage", account);
+                    sessionStorage.setItem("tokenStorage", accessToken);
+                    sessionStorage.setItem("accountStorage", account);
                     window.location.replace("nav.html");
                 }
                 else alert(myJson['message']);

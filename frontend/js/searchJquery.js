@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    const accessToken = localStorage.getItem("tokenStorage");
-    const account = localStorage.getItem("accountStorage");
+    const accessToken = sessionStorage.getItem("tokenStorage");
+    const account = sessionStorage.getItem("accountStorage");
     let request_url = "http://127.0.0.1:8080";
     let shopSearchResult = [];  // 紀錄符合搜索條件的商店（1D array）
     let shopInfoResult = [];  // 紀錄符合搜索條件的商店的細節（要呈現在 HTML DOM 上的東西）(2D array)

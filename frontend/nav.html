@@ -31,8 +31,8 @@
     <ul class="nav nav-tabs">
       <li class="active"><a href="#home">Home</a></li>
       <li id="shopItem"><a href="#menu1">Shop</a></li>
-      <li><a href="#menuMyOrder">My Order</a></li>
-      <li><a href="#menuShopOrder">Shop Order</a></li>
+      <li id="myOrderItem"><a href="#menuMyOrder">My Order</a></li>
+      <li id="shopOrderItem"><a href="#menuShopOrder">Shop Order</a></li>
       <li id="RecordItem"><a href="#menuRecord">Transaction Record</a></li>
       <li><a href="#menu2">Log Out</a></li>
     </ul>
@@ -426,9 +426,9 @@
               <h4 style="margin-bottom: 15px;">Action</h4>
               <select class="form-control" id="myOrderType">
                 <option>all</option>
-                <option>finished</option>
-                <option>not Finish</option>
-                <option>canceled</option>
+                <option>Finished</option>
+                <option>Not finish</option>
+                <option>Cancel</option>
               </select>
             </label>
           </div>
@@ -448,8 +448,62 @@
               </tr>
             </thead>
             <tbody>
+              <!-- for test -->
+              <tr>
+                <th scope="row">1</th>
+                <td>not finished</td>
+                <td>10:00</td>
+                <td>11:00</td>
+                <td>macdonald</td>
+                <td>100</td>            
+                <td><button type="button" id="orderDetailBtn_1_shopName_macdonald" class="btn btn-info btn-orderDetail" data-toggle="modal" data-target="#orderDetailModal">order details</button></td>
+              </tr>  
+
+
             </tbody>
           </table>
+
+          <!-- Modal: myOrder & shopOrder 一起共用這個 modal -->
+          <div class="modal fade" id="orderDetailModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">                  
+                <div class="modal-header">
+                  <h5 class="modal-title edit-modal-text" id="staticBackdropLabel">My Order Details</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="  col-xs-12">
+                      <table class="table" style=" margin-top: 15px;">
+                        <thead>
+                          <tr>
+                            <th scope="col">Picture</th>
+                            <th scope="col">meal name</th>
+                            <th scope="col">price</th>
+                            <th scope="col">Order Quantity</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          
+
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <div>
+                    <span id="order_subtotal">Subtotal <span >0</span></span><br/>
+                    <span id="order_deliveryFee">Delivery fee <span >0</span></span><br/>
+                    <span id="order_totalPrice">Total Price <span >0</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -461,9 +515,9 @@
               <h4 style="margin-bottom: 15px;">Action</h4>
               <select class="form-control" id="shopOrderType">
                 <option>all</option>
-                <option>finished</option>
-                <option>not finish</option>
-                <option>canceled</option>
+                <option>Finished</option>
+                <option>Not finish</option>
+                <option>Cancel</option>
               </select>
             </label>
           </div>
@@ -483,6 +537,22 @@
               </tr>
             </thead>
             <tbody>
+              <!-- for test -->
+              <tr>
+                <th scope="row">2</th>
+                <td>not finished</td>
+                <td>10:00</td>
+                <td>11:00</td>
+                <td>macdonald</td>
+                <td>100</td>            
+                <td><button type="button" id="orderDetailBtn_1_shopName_macdonald" class="btn btn-info btn-orderDetail" data-toggle="modal" data-target="#orderDetailModal">order details</button></td>
+                <td>
+                  <button type="button" class="btn btn-done" id="doneBtn_2" style="color: white; background-color: rgb(41, 155, 41);">Done</button>
+                  <button type="button" class="btn btn-danger">Cancel</button>
+                </td>
+              </tr> 
+
+
             </tbody>
           </table>
         </div>
@@ -593,6 +663,9 @@
   <script src="js/productJquery.js"></script>
   <script src="js/homeOrder.js"></script>
   <script src="js/transactionRecord.js"></script>
+  <script src="js/myOrder.js"></script>
+  <script src="js/shopOrder.js"></script>
+  <script src="js/tokenAccess.js"></script>
 
   <script src = "https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.1/jquery.twbsPagination.min.js"> </script>  
 </body>

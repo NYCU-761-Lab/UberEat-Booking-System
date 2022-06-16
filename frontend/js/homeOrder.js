@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    const accessToken = localStorage.getItem("tokenStorage");
+    const accessToken = sessionStorage.getItem("tokenStorage");
     let request_url = "http://127.0.0.1:8080";
     // global variables
     let shopName = null;
@@ -114,12 +114,9 @@ $(document).ready(function() {
 
         // calculate all prices
         totalPrice = subTotal + deliveryFee;
-        $('#subtotalPrice').val(Number(subTotal));
-        $('#subtotalPrice').html(Number(subTotal));
-        $('#deliveryPrice').val(Number(deliveryFee));
-        $('#deliveryPrice').html(Number(deliveryFee));
-        $('#totalPrice').val(Number(totalPrice));
-        $('#totalPrice').html(Number(totalPrice));
+        $('#subtotalPrice').text(subTotal);
+        $('#deliveryPrice').text(deliveryFee);
+        $('#totalPrice').text(totalPrice);
 
 
         // show the ordered products on the "calculated modal"
@@ -153,8 +150,6 @@ $(document).ready(function() {
     // click the Order button
     $('.btn-order').click(async function(e) {
         $("#calculateModal").find('tbody').empty();
-        // console.log(shopName);
-        // console.log(orderedProducts);
 
         // get order details to use API
         let deliverType = $('#deliveryType').val();

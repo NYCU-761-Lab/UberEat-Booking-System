@@ -1,13 +1,13 @@
 $(document).ready(function() {
-    const accessToken = localStorage.getItem("tokenStorage");
-    const account = localStorage.getItem("accountStorage");
+    const accessToken = sessionStorage.getItem("tokenStorage");
+    const account = sessionStorage.getItem("accountStorage");
     let request_url = "http://127.0.0.1:8080";
 
     // log out
     $(".logOutBtn").click(function() {
         window.location.replace("index.html");
-        localStorage.removeItem("tokenStorage");
-        localStorage.removeItem("accountStorage");
+        sessionStorage.removeItem("tokenStorage");
+        sessionStorage.removeItem("accountStorage");
     });
 
 
