@@ -269,8 +269,8 @@
                       <h5>Type</h5>
                       <div style="width: 30%;">
                         <select class="form-control" id="deliveryType">
-                          <option>Delivery</option>
-                          <option>Pick-up</option>
+                          <option>delivery</option>
+                          <option>pickup</option>
                         </select>
                       </div>
                     </div>
@@ -427,16 +427,22 @@
               <select class="form-control" id="myOrderType">
                 <option>all</option>
                 <option>Finished</option>
-                <option>Not finish</option>
+                <option>Not Finish</option>
                 <option>Cancel</option>
               </select>
             </label>
           </div>
         </div>
+
+        <button id="myOrder-cancels-btn" type="button" class="btn btn-danger" style="margin-left:8px;">
+          Cancel selected orders
+        </button>
+
         <div>
           <table id="data" class="table myOrderResult" style=" margin-top: 15px;">
             <thead>
               <tr>
+                <th scope="col"></th>
                 <th scope="col">Order ID</th>
                 <th scope="col">Status</th>
                 <th scope="col">Start</th>
@@ -463,7 +469,7 @@
             </tbody>
           </table>
 
-          <!-- Modal: myOrder & shopOrder 一起共用這個 modal -->
+          <!-- Modal: myOrder's order details modal -->
           <div class="modal fade" id="orderDetailModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">                  
@@ -476,7 +482,7 @@
                 <div class="modal-body">
                   <div class="row">
                     <div class="  col-xs-12">
-                      <table class="table" style=" margin-top: 15px;">
+                      <table class="table orderDetailTable" style=" margin-top: 15px;">
                         <thead>
                           <tr>
                             <th scope="col">Picture</th>
@@ -495,9 +501,9 @@
                 </div>
                 <div class="modal-footer">
                   <div>
-                    <span id="order_subtotal">Subtotal <span >0</span></span><br/>
-                    <span id="order_deliveryFee">Delivery fee <span >0</span></span><br/>
-                    <span id="order_totalPrice">Total Price <span >0</span></span>
+                    <span>Subtotal <span id="order_subtotal">0</span></span><br/>
+                    <span>Delivery fee <span id="order_deliveryFee" >0</span></span><br/>
+                    <span>Total Price <span id="order_totalPrice">0</span></span>
                   </div>
                 </div>
               </div>
@@ -516,16 +522,25 @@
               <select class="form-control" id="shopOrderType">
                 <option>all</option>
                 <option>Finished</option>
-                <option>Not finish</option>
+                <option>Not Finish</option>
                 <option>Cancel</option>
               </select>
             </label>
           </div>
         </div>
+
+        <button id="shopOrder-dones-btn" type="button" class="btn btn-success" style="margin-left:8px;">
+          Finish selected orders
+        </button>
+        <button id="shopOrder-cancels-btn" type="button" class="btn btn-danger" style="margin-left:8px;">
+          Cancel selected orders
+        </button>
+
         <div>
           <table id="data" class="table shopOrderResult" style=" margin-top: 15px;">
             <thead>
               <tr>
+                <th scope="col"></th>
                 <th scope="col">Order ID</th>
                 <th scope="col">Status</th>
                 <th scope="col">Start</th>
@@ -555,6 +570,48 @@
 
             </tbody>
           </table>
+
+          <!-- Modal: shopOrder's order details modal -->
+          <div class="modal fade" id="shopOrderDetailModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">                  
+                <div class="modal-header">
+                  <h5 class="modal-title edit-modal-text" id="staticBackdropLabel">Shop Order Details</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="  col-xs-12">
+                      <table class="table shopOrderDetailTable" style=" margin-top: 15px;">
+                        <thead>
+                          <tr>
+                            <th scope="col">Picture</th>
+                            <th scope="col">meal name</th>
+                            <th scope="col">price</th>
+                            <th scope="col">Order Quantity</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <div>
+                    <span>Subtotal <span id="shopOrder_subtotal">0</span></span><br/>
+                    <span>Delivery fee <span id="shopOrder_deliveryFee" >0</span></span><br/>
+                    <span>Total Price <span id="shopOrder_totalPrice">0</span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
         </div>
       </div>
 

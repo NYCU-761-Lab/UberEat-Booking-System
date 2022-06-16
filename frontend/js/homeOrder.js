@@ -5,6 +5,7 @@ $(document).ready(function() {
     let shopName = null;
     let deliverType = null;
     let orderedProducts = [];
+    let frontend_totalPrice = null;
     // console.log(accessToken);
 
 
@@ -85,7 +86,7 @@ $(document).ready(function() {
 
 
         // calculate delivery fee
-        if (deliverType === "Delivery") {
+        if (deliverType === "delivery") {
             body = {
                 'shop_name': shopName
             }
@@ -107,13 +108,14 @@ $(document).ready(function() {
             if (deliveryFee < 10) deliveryFee = 10;
             deliveryFee = Math.round(deliveryFee);  // 四捨五入
 
-        } else if (deliverType === "Pick-up") {
+        } else if (deliverType === "pickup") {
             deliveryFee = 0;
         }
 
 
         // calculate all prices
         totalPrice = subTotal + deliveryFee;
+        frontend_totalPrice = totalPrice;
         $('#subtotalPrice').text(subTotal);
         $('#deliveryPrice').text(deliveryFee);
         $('#totalPrice').text(totalPrice);
@@ -167,7 +169,8 @@ $(document).ready(function() {
         let body = {
             'order_shop_name': shopName,
             'order_details': orderDetails,
-            'delivery_type': deliverType
+            'delivery_type': deliverType,
+            'front_total_price': Number(frontend_totalPrice)
         }
         fetch(request_url + "/order/make", {
             method: 'POST',
@@ -175,6 +178,7 @@ $(document).ready(function() {
             body: JSON.stringify(body)
         })
         .then(function(response) {
+            console.log(response);
             statusCode = response['status'];
             return response.json();
         })

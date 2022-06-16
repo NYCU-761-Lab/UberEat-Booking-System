@@ -1,6 +1,7 @@
 $(document).ready(function() {
     const accessToken = sessionStorage.getItem("tokenStorage");
     let request_url = "http://127.0.0.1:8080";
+    let checkItems = [];  // 哪些 checkbox 有被選起來
 
 
     // every time click "my order", the result on the html DOM will be the newest
@@ -25,7 +26,7 @@ $(document).ready(function() {
             for (i in tmp1) {
                 finalList.push(tmp1[i]);
             }
-            let tmp2 = await getMyOrderList('Not finish');
+            let tmp2 = await getMyOrderList('Not Finish');
             for (i in tmp2) {
                 finalList.push(tmp2[i]);
             }
@@ -38,20 +39,21 @@ $(document).ready(function() {
             finalList.sort(function(a, b) {
                 let x = a[0].toLowerCase();
                 let y = b[0].toLowerCase();
-                if (x > y) { return 1; }
-                if (x < y) { return -1; }
+                if (x < y) { return 1; }
+                // if (x < y) { return -1; }
                 return 0;
             });
         } else {
             finalList = await getMyOrderList(actionType);
         }
-        console.log(finalList);
+        // console.log(finalList);
         showMyOrderList(finalList);
     }
 
 
     // get the transaction result of a action (finished, not finished, cancel)
     async function getMyOrderList(action) {
+        let statusCode = null;
         let headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -66,6 +68,7 @@ $(document).ready(function() {
             body: JSON.stringify(body)
         })
         .then(function(response) {
+            // console.log(response);
             statusCode = response['status'];
             return response.json();
         })
@@ -95,6 +98,13 @@ $(document).ready(function() {
             if (myOrderAction.includes('cancel')) {   // add cancel button if this order can be canceled
                 $(".myOrderResult").find('tbody')
                 .append($('<tr>')
+                    .append($('<th>')  // checkbox
+                        .append($('<input type="checkbox">')
+                            .attr('id', 'check_' + myOrderID)
+                            .attr('class', 'myOrder_checkbox')
+                            .attr('value', 'check_' + myOrderID)
+                        )
+                    )
                     .append($('<th>')
                         .attr('scope', 'row')
                         .text(myOrderID)
@@ -119,7 +129,7 @@ $(document).ready(function() {
                         .append($('<button>')
                             .attr('type', 'button')
                             .attr('class', 'btn btn-info btn-orderDetail')
-                            .attr('id', 'orderDetailBtn_' + myOrderID + '_' + myOrderShopName)
+                            .attr('id', 'orderDetailBtn_' + myOrderID + '_shopName_' + myOrderShopName)
                             .attr('data-toggle', 'modal')
                             .attr('data-target', '#orderDetailModal')
                             .text('order details')
@@ -137,6 +147,7 @@ $(document).ready(function() {
             } else {
                 $(".myOrderResult").find('tbody')
                 .append($('<tr>')
+                    .append($('<th>'))  // no checkbox
                     .append($('<th>')
                         .attr('scope', 'row')
                         .text(myOrderID)
@@ -179,7 +190,10 @@ $(document).ready(function() {
         let tmpIdx = e.target.id.search('_shopName_');
         let orderID = e.target.id.slice(15, tmpIdx);
         let orderShopName = e.target.id.slice(tmpIdx + 10);
+        let orderList = null;
+        let orderPrice = null;
 
+        let statusCode = null;
         let headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -189,25 +203,27 @@ $(document).ready(function() {
             'shop_name': orderShopName,
             'order_id': orderID
         }
-        let orderList = await fetch(request_url + "/order/detail", { 
+        await fetch(request_url + "/order/detail", { 
             method: 'POST',
             headers: headers,
             body: JSON.stringify(body)
         })
         .then(function(response) {
+            // console.log(response);
             statusCode = response['status'];
             return response.json();
         })
         .then(function(myJson) {
             if (statusCode === 200) {
-                return myJson['order_detail'];
+                orderList =  myJson['order_item_detail'];
+                orderPrice = myJson['order_price_list'];
             }
         });
         // add products to html DOM
         $(".orderDetailTable").find('tbody').empty();
         for (i in orderList) {
-            let productName = orderList[i][0];
-            let productImg = orderList[i][1];
+            let productImg = orderList[i][0];
+            let productName = orderList[i][1];
             let productPrice = orderList[i][2];
             let productQuantity = orderList[i][3];
 
@@ -232,7 +248,10 @@ $(document).ready(function() {
                 )
             );
         }
-        /////////////////////這邊還需要加上顯示外送費用！！
+        // 顯示外送費用
+        $('#order_subtotal').text(orderPrice[0]);
+        $('#order_deliveryFee').text(orderPrice[1]);
+        $('#order_totalPrice').text(orderPrice[2]);
     });
 
 
@@ -269,4 +288,56 @@ $(document).ready(function() {
             }
         });
     });
+
+
+    // Bonus
+    // 把勾起來的 checkbox 加到 checkItems 裏面
+    $(document).on('change', '.myOrder_checkbox', function(e) {
+        let itemID = e.target.id.slice(6);
+        if(e.target.checked) {
+            if (checkItems.includes(itemID) === false) {  // 避免重複加到 list
+                checkItems.push(itemID);
+            }
+        } else {
+            const idx = checkItems.indexOf(itemID);
+            if (idx > -1) {
+                checkItems.splice(idx, 1);
+            }
+        }
+    });
+
+    // cancel these items
+    $('#myOrder-cancels-btn').click(async function() {
+        console.log(checkItems);
+        for (orderID in checkItems) {
+            let statusCode = null;
+            let headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer " + accessToken
+            }
+            let body = {
+                'order_id': orderID
+            }
+            fetch(request_url + "/order/user_cancel", {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(body)
+            })
+            .then(function(response) {
+                console.log(response);
+                statusCode = response['status'];
+                return response.json();
+            })
+            .then(function(myJson) {
+                console.log(myJson);
+                if (statusCode === 200) {
+                    alert(myJson['message']);
+                    getFinalList();  // 刷新列表
+                } else {
+                    alert(myJson['message']);
+                }
+            });
+        }
+    })
 });

@@ -39,8 +39,8 @@ $(document).ready(function() {
             finalList.sort(function(a, b) {
                 let x = a[0].toLowerCase();
                 let y = b[0].toLowerCase();
-                if (x > y) { return 1; }
-                if (x < y) { return -1; }
+                if (x < y) { return 1; }
+                // if (x > y) { return -1; }
                 return 0;
             });
         } else {

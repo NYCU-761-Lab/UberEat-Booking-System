@@ -66,8 +66,8 @@ class product_register(Resource):
         # can save type: jpg(jpeg), png, bmp (svg will fail)
         img_type = picture_base64[ picture_base64.find("/")+1 : picture_base64.find(";") ]
         pure_picture_base64 = picture_base64[ picture_base64.find(",")+1 :]  # delete header
-        img_inside_url = "/Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/product_image3/" + user_account + "_" + product_name + "." + img_type
-        # img_inside_url = "/Users/angelahsi/Desktop/NYCU/大二下課程/資料庫/HW2/UberEat-Booking-System/backend/product_image/" + user_account + "_" + product_name + "." + img_type
+        # img_inside_url = "/Users/yoona/Documents/4th_Sem/sql/HW2_new/UberEat-Booking-System/backend/product_image3/" + user_account + "_" + product_name + "." + img_type
+        img_inside_url = "/Users/angelahsi/Desktop/NYCU/大二下課程/資料庫/HW2/UberEat-Booking-System/backend/product_image/" + user_account + "_" + product_name + "." + img_type
         with open(img_inside_url, "wb") as fh:
             fh.write(base64.urlsafe_b64decode(pure_picture_base64))
 
