@@ -9,6 +9,7 @@ from models.product import ProductModel
 from models.order import OrderModel
 from models.transaction import TransactionModel
 from models.order_details import OrderDetailsModel
+from models.img_per import ImgPerModel
 import numpy as np
 import cv2
 import base64
@@ -205,6 +206,72 @@ class order_make(Resource):
             print(e)    # print exception -> 自己 raise 好像是 none
             OrderModel.rollback_order_session()
             return {'message': 'Fault in db process! : ('}, 400
+
+
+
+
+#----------------------------------------- filter / detail -----------------------------------------
+
+# 5. 訂單詳情 order_detail
+# ** order detail 的權限對 user, shop 是一樣的 **
+# -> 直接看 OID 拿資料就好
+class order_detail(Resource):
+
+    parser = reqparse.RequestParser()
+    parser.add_argument('order_id', type = str, required = True,    # order_id is enough -> it is primary key in order table
+                        help = 'This field cannot be left blank.')
+
+    @jwt_required(optional = True)
+    def post(self):
+        user_account = get_jwt_identity()
+        # 1. check is valid user
+        user = UserModel.query.filter_by(account = user_account).one_or_none() 
+        if not user:
+            return {'message': 'This user does not exist.'}, 400
+
+        # unfold data and check
+        data = order_detail.parser.parse_args()
+        order_id     = data['order_id']
+
+        # 2. 確認 order 存在
+        order = OrderModel.query.filter_by(order_id = order_id).one_or_none() 
+        if not order:
+            return {'message': 'This order does not exist.'}, 400
+        
+        # 3. 確認 user 是該 order 的 (1)下單者 (2)下單店家擁有人  其一，管控查看權限 -> 防非前端駭客
+        if not (order.owner == user.account):
+            user_shop = ShopModel.query.filter_by(owner = user.account).one_or_none()    # 找出該 user 擁有的 shop
+            # print(user_shop.shop_name, order.shop_name)
+            if not user_shop:   # 如果不是下單者，確認該 user 是否擁有店家
+                return {'message': 'Forbidden to access.'}, 403
+            elif user_shop.shop_name != order.shop_name:    # & 該 user 擁有的 shop是下單店家   
+                return {'message': 'Forbidden to access.'}, 403
+        
+        # 4. 成功返回 order detail
+        # 找出所有 order_id 對應的 order_detail
+        order_details = OrderDetailsModel.query.filter_by(order_id = order.order_id).all()    # 有很多筆
+        if not order_details:
+            return {'message': 'Can not find order details.'}, 400
+
+        order_item_list = []
+        for single_detail in order_details:
+            # find the image base64 code for the order detail
+            img_per = ImgPerModel.query.filter_by(per_id = single_detail.product_img_per_id).one_or_none()  # 只有一筆
+            if not img_per:
+                return {'message': 'Can not find the image base64 code for a image.'}, 400
+            
+            # query 都沒問題了
+            info_list = [  img_per.base64,
+                           single_detail.product_name,
+                           single_detail.product_then_price,
+                           single_detail.product_number, ]
+            order_item_list.append(info_list)
+        
+        order_price_list = [order.sub_total, order.delivery_fee, order.total]
+        
+        return { 'order_item_detail': order_item_list,
+                 'order_price_list' : order_price_list
+        }, 200
 
 
 # 6. user 訂單 filter

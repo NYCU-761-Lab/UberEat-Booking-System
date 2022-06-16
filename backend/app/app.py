@@ -8,7 +8,7 @@ from resources.user import auth_register, auth_login, auth_check_account, auth_a
 from resources.shop import shop_register, shop_name_filter, shop_distance_filter, shop_type_filter, get_shop_type, get_shop_distance, get_shop_latitude, get_shop_longitude, get_shop_name_of_user, shop_check_name
 from resources.product import product_register, get_product_info_of_a_shop, product_name_filter, product_price_filter, product_edit_price, product_edit_quantity, product_delete
 from resources.transaction import transaction_type_filter
-from resources.order import order_make, order_user_filter, order_shop_filter
+from resources.order import order_make, order_user_filter, order_shop_filter, order_detail
 
 app = Flask(__name__)
 
@@ -96,8 +96,10 @@ api.add_resource( transaction_type_filter, "/transaction/type_filter")
 
 # order api
 api.add_resource( order_make, "/order/make")
+api.add_resource( order_detail, "/order/detail")
 api.add_resource( order_user_filter, "/order/user_filter")
 api.add_resource( order_shop_filter, "/order/shop_filter")
+
 
 
 if __name__ == '__main__':
