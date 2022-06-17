@@ -161,36 +161,41 @@ $(document).ready(function() {
             orderDetails.push([orderedProducts[i].name, orderedProducts[i].count]);
         }
 
-        let statusCode = null;
-        let headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Authorization": "Bearer " + accessToken
-        }
-        let body = {
-            'order_shop_name': shopName,
-            'order_details': orderDetails,
-            'delivery_type': deliverType,
-            'front_total_price': Number(frontend_totalPrice)
-        }
-        fetch(request_url + "/order/make", {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(body)
-        })
-        .then(function(response) {
-            console.log(response);
-            statusCode = response['status'];
-            return response.json();
-        })
-        .then(function(myJson) {
-            if (statusCode === 200) {
-                alert(myJson['message']);
-                location.reload();  // refresh the page
-            } else {
-                alert(myJson['message']);
+        // 不能送空包彈
+        if (orderDetails.length > 0) {
+            let statusCode = null;
+            let headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "Bearer " + accessToken
             }
-        });
+            let body = {
+                'order_shop_name': shopName,
+                'order_details': orderDetails,
+                'delivery_type': deliverType,
+                'front_total_price': Number(frontend_totalPrice)
+            }
+            fetch(request_url + "/order/make", {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(body)
+            })
+            .then(function(response) {
+                console.log(response);
+                statusCode = response['status'];
+                return response.json();
+            })
+            .then(function(myJson) {
+                if (statusCode === 200) {
+                    alert(myJson['message']);
+                    location.reload();  // refresh the page
+                } else {
+                    alert(myJson['message']);
+                }
+            });
+        } else {
+            alert("Your order cannot be completed! Please order something.");
+        }
         orderedProducts = [];     
     });
 
