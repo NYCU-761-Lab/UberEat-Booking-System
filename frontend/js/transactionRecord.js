@@ -86,7 +86,12 @@ $(document).ready(function() {
             let transactionType = transactionList[i][1];
             let transactionTime = transactionList[i][2];
             let transactionTrader = transactionList[i][3];
-            let transactionMoney = transactionList[i][4]
+            let transactionMoney = transactionList[i][4];
+            if (transactionType === "receive" || transactionType === "recharge") {
+                transactionMoney = "+" + transactionMoney.toString();
+            } else {
+                transactionMoney = "-" + transactionMoney.toString();
+            }
 
             // add elements to html DOM
             $(".tranctionResult").find('tbody')

@@ -659,7 +659,7 @@
       </div>
 
     </div>
-
+    <!-- data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true" -->
     <!-- Modals will show after clicking "Calculate the price" button -->
     <div class="modal fade" id="calculateModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="calculateModal" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -728,6 +728,17 @@
   <script src="js/tokenAccess.js"></script>
 
   <script src = "https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.1/jquery.twbsPagination.min.js"> </script>  
+
+  <!-- CSS -->
+  <style>
+    .modal-dialog{
+      overflow-y: initial !important
+    }
+    .modal-body{
+      height: 80vh;
+      overflow-y: auto;
+    }
+  </style>
 </body>
 
 </html>
