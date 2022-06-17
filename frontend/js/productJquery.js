@@ -207,6 +207,8 @@ $(document).ready(function() {
     $(document).on('click', '.btn-edit', async function(e) {
         // get the store's information
         let targetProduct = e.target.id.slice(8);
+        console.log(e.target.id);
+        console.log(targetProduct);
         $(".edit-modal-text").text("edit " + targetProduct);
 
         $(".editBtn").unbind().click(async function() {

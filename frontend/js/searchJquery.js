@@ -358,6 +358,7 @@ $(document).ready(function() {
             let productImg = productList[i][1];
             let productPrice = productList[i][2];
             let productQuantity = productList[i][3];
+            let productNameNew = productName.replace(' ', '---');
 
             $(".menuModals").find('tbody')
             .append($('<tr>')
@@ -389,18 +390,18 @@ $(document).ready(function() {
                     .append($('<button>')
                         .attr('type', 'button')
                         .attr('class', 'btn btn-light btn-minus')
-                        .attr('id', 'minusBtn_' + productName)
+                        .attr('id', 'minusBtn_' + productNameNew)
                         .attr('style', 'margin-right: 5px;')
                         .text('-')
                     )
                     .append($('<span>')
-                        .attr('id', 'orderCnt_' + productName)
-                        .text(0)
+                        .attr('id', 'orderCnt_' + productNameNew)
+                        .text(Number(0))
                     )
                     .append($('<button>')
                         .attr('type', 'button')
                         .attr('class', 'btn btn-light btn-add')
-                        .attr('id', 'addBtn_' + productName)
+                        .attr('id', 'addBtn_' + productNameNew)
                         .attr('style', 'margin-left: 5px;')
                         .text('+')
                     )
