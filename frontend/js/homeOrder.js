@@ -59,7 +59,7 @@ $(document).ready(function() {
         // get the products in the order & calculate subTotal
         for (i in productList) {
             let productName = productList[i][0];
-            let productNameNew = productName.replace(" ", "---");
+            let productNameNew = productName.replaceAll(" ", "---");
 
             let productPrice = productList[i][2];
             let productCnt = $('#orderCnt_' + productNameNew).val();

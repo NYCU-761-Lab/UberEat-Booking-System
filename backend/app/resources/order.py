@@ -277,7 +277,7 @@ class order_user_cancel(Resource):
             for single_detail in order_details:
                 product_name = single_detail.product_name
                 product_number = single_detail.product_number
-                product = ProductModel.query.filter_by(product_name = product_name).one_or_none()
+                product = ProductModel.query.filter_by(product_name = product_name, belong_shop_name = order.shop_name).one_or_none()
                 if not product: # 商品已被刪除 -> 跳過數量操作
                     continue    
 
@@ -381,7 +381,7 @@ class order_shop_complete(Resource):
         can_complete_order = True
         for single_detail in order_details:
             product_name = single_detail.product_name
-            product = ProductModel.query.filter_by(product_name = product_name).one_or_none() 
+            product = ProductModel.query.filter_by(product_name = product_name, belong_shop_name = order.shop_name).one_or_none() 
             if not product:
                 can_complete_order = False
                 break
@@ -493,7 +493,7 @@ class order_shop_cancel(Resource):
             for single_detail in order_details:
                 product_name = single_detail.product_name
                 product_number = single_detail.product_number
-                product = ProductModel.query.filter_by(product_name = product_name).one_or_none()
+                product = ProductModel.query.filter_by(product_name = product_name, belong_shop_name = order.shop_name).one_or_none()
                 if not product: # 商品已被刪除 -> 跳過數量操作
                     continue    
 

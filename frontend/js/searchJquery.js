@@ -358,7 +358,7 @@ $(document).ready(function() {
             let productImg = productList[i][1];
             let productPrice = productList[i][2];
             let productQuantity = productList[i][3];
-            let productNameNew = productName.replace(' ', '---');
+            let productNameNew = productName.replaceAll(' ', '---');
 
             $(".menuModals").find('tbody')
             .append($('<tr>')
