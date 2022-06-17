@@ -696,7 +696,7 @@ class order_shop_filter(Resource):
                           single_order.status, 
                           single_order.start_time, 
                           single_order.end_time, 
-                          single_order.owner,   # shop 被誰下訂單
+                          single_order.shop_name,   # shop 被誰下訂單 single_order.owner -> single_order.shop_name
                           single_order.total,
                           action ]
 
